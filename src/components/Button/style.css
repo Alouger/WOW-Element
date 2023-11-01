@@ -1,0 +1,122 @@
+.wow-button {
+    --wow-button-font-weight: var(--wow-font-weight-primary);
+    --wow-button-border-color: var(--wow-border-color);
+    --wow-button-bg-color: var(--wow-fill-color-blank);
+    --wow-button-text-color: var(--wow-text-color-regular);
+    --wow-button-disabled-text-color: var(--wow-disabled-text-color);
+    --wow-button-disabled-bg-color: var(--wow-fill-color-blank);
+    --wow-button-disabled-border-color: var(--wow-border-color-light);
+    --wow-button-hover-text-color: var(--wow-color-primary);
+    --wow-button-hover-bg-color: var(--wow-color-primary-light-9);
+    --wow-button-hover-border-color: var(--wow-color-primary-light-7);
+    --wow-button-active-text-color: var(--wow-button-hover-text-color);
+    --wow-button-active-border-color: var(--wow-color-primary);
+    --wow-button-active-bg-color: var(--wow-button-hover-bg-color);
+    --wow-button-outline-color: var(--wow-color-primary-light-5);
+    --wow-button-active-color: var(--wow-text-color-primary);
+}
+.wow-button {
+    display: inline-flex;
+    justify-content: center;
+    align-items: center;
+    line-height: 1;
+    height: 32px;
+    white-space: nowrap;
+    cursor: pointer;
+    color: var(--wow-button-text-color);
+    text-align: center;
+    box-sizing: border-box;
+    outline: none;
+    transition: .1s;
+    font-weight: var(--wow-button-font-weight);
+    user-select: none;
+    vertical-align: middle;
+    -webkit-appearance: none;
+    background-color: var(--wow-button-bg-color);
+    border: var(--wow-border);
+    border-color: var(--wow-button-border-color);
+    padding: 8px 15px;
+    font-size: var(--wow-font-size-base);
+    border-radius: var(--wow-border-radius-base);
+    & + & {
+        margin-left: 12px;
+    }
+    &:hover,
+    &:focus {
+        color: var(--wow-button-hover-text-color);
+        border-color: var(--wow-button-hover-border-color);
+        background-color: var(--wow-button-hover-bg-color);
+        outline: none;    
+    }
+    &:active {
+        color: var(--wow-button-active-text-color);
+        border-color: var(--wow-button-active-border-color);
+        background-color: var(--wow-button-active-bg-color);
+        outline: none;
+    }
+    &.is-plain {
+        --wow-button-hover-text-color: var(--wow-color-primary);
+        --wow-button-hover-bg-color: var(--wow-fill-color-blank);
+        --wow-button-hover-border-color: var(--wow-color-primary);    
+    }
+    /*round*/
+    &.is-round {
+        border-radius: var(--wow-border-radius-round);
+    }
+    /*circle*/
+    &.is-circle {
+        border-radius: 50%;
+        padding: 8px;
+    }
+    /*disabled*/
+    &.is-disabled, &.is-disabled:hover, &.is-disabled:focus, 
+    &[disabled], &[disabled]:hover, &[disabled]:focus 
+    {
+        color: var(--wow-button-disabled-text-color);
+        cursor: not-allowed;
+        background-image: none;
+        background-color: var(--wow-button-disabled-bg-color);
+        border-color: var(--wow-button-disabled-border-color);
+    }
+}
+@each $val in primary,success,warning,info,danger {
+    .wow-button--$(val) {
+        --wow-button-text-color: var(--wow-color-white);
+        --wow-button-bg-color: var(--wow-color-$(val));
+        --wow-button-border-color: var(--wow-color-$(val));
+        --wow-button-outline-color: var(--wow-color-$(val)-light-5);
+        --wow-button-active-color: var(--wow-color-$(val)-dark-2);
+        --wow-button-hover-text-color: var(--wow-color-white);
+        --wow-button-hover-bg-color: var(--wow-color-$(val)-light-3);
+        --wow-button-hover-border-color: var(--wow-color-$(val)-light-3);
+        --wow-button-active-bg-color: var(--wow-color-$(val)-dark-2);
+        --wow-button-active-border-color: var(--wow-color-$(val)-dark-2);
+        --wow-button-disabled-text-color: var(--wow-color-white);
+        --wow-button-disabled-bg-color: var(--wow-color-$(val)-light-5);
+        --wow-button-disabled-border-color: var(--wow-color-$(val)-light-5);
+    }
+    .wow-button--$(val).is-plain {
+        --wow-button-text-color: var(--wow-color-$(val));
+        --wow-button-bg-color: var(--wow-color-$(val)-light-9);
+        --wow-button-border-color: var(--wow-color-$(val)-light-5);
+        --wow-button-hover-text-color: var(--wow-color-white);
+        --wow-button-hover-bg-color: var(--wow-color-$(val));
+        --wow-button-hover-border-color: var(--wow-color-$(val));
+        --wow-button-active-text-color: var(--wow-color-white);
+    }
+}
+.wow-button--large {
+    --wow-button-size: 40px;
+    height: var(--wow-button-size);
+    padding: 12px 19px;
+    font-size: var(--wow-font-size-base);
+    border-radius: var(--wow-border-radius-base);
+}
+.wow-button--small {
+    --wow-button-size: 24px;
+    height: var(--wow-button-size);
+    padding: 5px 11px;
+    font-size: 12px;
+    border-radius: calc(var(--wow-border-radius-base) - 1px);
+}
+  
