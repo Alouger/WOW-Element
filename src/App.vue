@@ -6,6 +6,9 @@ import { ref, onMounted } from 'vue'
 import Collapse from './components/Collapse/Collapse.vue'
 import Item from './components/Collapse/CollapseItem.vue'
 
+// 我们预设name为a的collapseItem是打开的
+const openedValue = ref(['a']);
+
 // 通过ref拿到button的dom节点，注意模板中的ref属性值要和我们script中的变量名一样
 // 一开始buttonRef会是null类型，所以要用联合类型加上null
 const buttonRef = ref<ButtonInstance | null>(null)
@@ -14,6 +17,9 @@ onMounted(() => {
     // ref自动解包
     console.log('buttonRef', buttonRef.value.ref);
   }
+  setTimeout(() => {
+    openedValue.value = ['a', 'b']
+  }, 2000);
 })
 const testClick = () => {
   alert(123);
@@ -47,7 +53,7 @@ const testClick = () => {
     <Button size="large">Large</Button>
     <Button size="small">Small</Button>
 
-    <Collapse>
+    <Collapse v-model="openedValue" accordion>
       <Item name="a">
         <!-- v-slot的缩写是#, 这里相当于<template v-slot:title> -->
         <template #title>
@@ -63,6 +69,7 @@ const testClick = () => {
         <div>this is cccc test</div>
       </Item>
     </Collapse>
+    {{ openedValue }}
   </main>
 </template>
 
