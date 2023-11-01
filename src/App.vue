@@ -5,6 +5,7 @@ import type { ButtonInstance } from './components/Button/types'
 import { ref, onMounted } from 'vue'
 import Collapse from './components/Collapse/Collapse.vue'
 import Item from './components/Collapse/CollapseItem.vue'
+import Icon from './components/Icon/Icon.vue'
 
 // 我们预设name为a的collapseItem是打开的
 const openedValue = ref(['a']);
@@ -33,7 +34,7 @@ const testClick = () => {
     <div class="wrapper">
     </div>
   </header>
-
+  <Icon icon="arrow-up" size="2xl" spin />
   <main>
     <Button ref="buttonRef" @click="testClick">Test Button</Button>
     <Button plain>Plain Button</Button>
