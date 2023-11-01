@@ -3,6 +3,8 @@
 import Button from './components/Button/Button.vue'
 import type { ButtonInstance } from './components/Button/types'
 import { ref, onMounted } from 'vue'
+import Collapse from './components/Collapse/Collapse.vue'
+import Item from './components/Collapse/CollapseItem.vue'
 
 // 通过ref拿到button的dom节点，注意模板中的ref属性值要和我们script中的变量名一样
 // 一开始buttonRef会是null类型，所以要用联合类型加上null
@@ -44,6 +46,23 @@ const testClick = () => {
     <Button type="danger" plain>Danger plain</Button><br/><br/>
     <Button size="large">Large</Button>
     <Button size="small">Small</Button>
+
+    <Collapse>
+      <Item name="a">
+        <!-- v-slot的缩写是#, 这里相当于<template v-slot:title> -->
+        <template #title>
+          <h1>nice title</h1>
+        </template>
+        <h1>headline title</h1>
+        <div>this is content a aaa</div>
+      </Item>
+      <Item name="b" title="nice title b item b">
+        <div>this is bbbbb test</div>
+      </Item>
+      <Item name="c" title="nice cccc" disabled>
+        <div>this is cccc test</div>
+      </Item>
+    </Collapse>
   </main>
 </template>
 
