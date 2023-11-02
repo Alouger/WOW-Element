@@ -11,6 +11,7 @@
         <!-- 在slot中间放入{{title}}, 相当于设置了一个默认值，当我们不传name=“title”的slot时，就会用CollapseItem的title属性值作为title -->
         <!-- 如果传了name=“title”的slot, 就覆盖掉默认值 -->
         <slot name="title">{{ title }}</slot>
+        <Icon icon="angle-right" class="header-angle"/>
       </div>
       <!-- 动画组件 -->
       <Transition name="slide" v-on="transitionEvents">
@@ -28,6 +29,7 @@
 import { inject, computed } from 'vue'
 import type { CollapseItemProps } from "./types";
 import { collapseContextKey } from './types'
+import Icon from '../Icon/Icon.vue'
 defineOptions({
     name: 'WowCollapseItem'
 })

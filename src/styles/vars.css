@@ -66,4 +66,7 @@
     --wow-disabled-bg-color: var(--wow-fill-color-light);
     --wow-disabled-text-color: var(--wow-text-color-placeholder);
     --wow-disabled-border-color: var(--wow-border-color-light);
+    /*animation*/
+    --wow-transition-duration: .3s;
+    --wow-transition-duration-fast: .2s;
   }

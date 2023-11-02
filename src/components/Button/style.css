@@ -78,6 +78,10 @@
         background-color: var(--wow-button-disabled-bg-color);
         border-color: var(--wow-button-disabled-border-color);
     }
+    /* 这里代码的意思是当当前class是wow-icon，并且后面跟的是span的时候，就在span上面设置一个margin-left */
+    [class*=wow-icon] + span {
+        margin-left: 6px;
+    }
 }
 @each $val in primary,success,warning,info,danger {
     .wow-button--$(val) {

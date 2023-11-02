@@ -33,6 +33,13 @@
     }
     &.is-active {
       border-bottom-color: transparent;
+      .header-angle {
+        /* 旋转90度 */
+        transform: rotate(90deg);
+      }
+    }
+    .header-angle {
+      transition: transform var(--wow-transition-duration);
     }
   }
   .wow-collapse-item__content {
@@ -46,5 +53,6 @@
     padding-bottom: 25px;
   }
   .slide-enter-active, .slide-leave-active {
-    transition: height 1s ease-in-out;
+    /* transition: height 1s ease-in-out; */
+    transition: height var(--wow-transition-duration);
   }

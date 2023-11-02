@@ -1,5 +1,5 @@
 <template>
-    <i class="wow-icon" :class="{[`wow-icon--${type}`] : type}" :style="customStyles">
+    <i class="wow-icon" :class="{[`wow-icon--${type}`] : type}" :style="customStyles" v-bind="$attrs">
       <font-awesome-icon v-bind="filteredProps"/>
     </i>
 </template>

@@ -9,12 +9,18 @@
         'is-plain': plain,
         'is-round': round,
         'is-circle': circle,
-        'is-disabled': disabled
-      }"
-      :disabled="disabled"
+        'is-disabled': disabled,
+        'is-loading': loading
+      }" 
+      :disabled="disabled || loading"
       :autofocus="autofocus"
       :type="nativeType"
     >
+      <!-- loading时也应该是是diasbled的状态 -->
+      <!-- 添加loading的图标 -->
+      <Icon icon="spinner" spin v-if="loading" />
+      <!-- 添加传入正式icon的属性指的图标 -->
+      <Icon :icon="icon" v-if="icon"/>
       <!-- 设置slot，会用span包裹一下, 不用span也可以 -->
       <span>
         <slot />
@@ -26,6 +32,7 @@
 import { ref } from 'vue' 
 // 注明type 表明导入的是类型，不是实现代码
 import type { ButtonProps } from './types';
+import Icon from '../Icon/Icon.vue'
 // 有了vue macros后，不用把组件属性单独写在一个script里了，可以和setup在同一个scrip
 defineOptions({
   name: 'WowButton'
