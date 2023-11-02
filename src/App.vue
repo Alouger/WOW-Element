@@ -13,6 +13,7 @@ const openedValue = ref(['a']);
 // 通过ref拿到button的dom节点，注意模板中的ref属性值要和我们script中的变量名一样
 // 一开始buttonRef会是null类型，所以要用联合类型加上null
 const buttonRef = ref<ButtonInstance | null>(null)
+const size = ref<any>('3x')
 onMounted(() => {
   if (buttonRef.value) {
     // ref自动解包
@@ -20,6 +21,7 @@ onMounted(() => {
   }
   setTimeout(() => {
     openedValue.value = ['a', 'b']
+    size.value ='2xl'
   }, 2000);
 })
 const testClick = () => {
@@ -34,7 +36,7 @@ const testClick = () => {
     <div class="wrapper">
     </div>
   </header>
-  <Icon icon="arrow-up" size="2xl" spin />
+  <Icon icon="arrow-up" :size="size" type="danger" color="#0e7a0d" />
   <main>
     <Button ref="buttonRef" @click="testClick">Test Button</Button>
     <Button plain>Plain Button</Button>

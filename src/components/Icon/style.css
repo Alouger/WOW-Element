@@ -1,0 +1,17 @@
+/* inherit 指该项属性继承自父元素 */
+.wow-icon {
+    --wow-icon-color: inherit;
+    display: inline-flex;
+    justify-content: center;
+    align-items: center;
+    position: relative;
+    fill: currentColor;
+    color: var(--wow-icon-color);
+    font-size: inherit;
+  }
+  
+  @each $val in primary,info,success,warning,danger {
+    .wow-icon--$(val) {
+      --wow-icon-color: var(--wow-color-$(val));
+    }
+  }

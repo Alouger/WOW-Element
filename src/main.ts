@@ -9,5 +9,4 @@ import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome'
 
 library.add(fas)
 
-createApp(App)
-.mount('#app')
+createApp(App).mount('#app')
