@@ -6,6 +6,7 @@ import { ref, onMounted } from 'vue'
 import Collapse from './components/Collapse/Collapse.vue'
 import Item from './components/Collapse/CollapseItem.vue'
 import Icon from './components/Icon/Icon.vue'
+import Alert from './components/Alert/Alert.vue'
 
 // 我们预设name为a的collapseItem是打开的
 const openedValue = ref(['a']);
@@ -30,6 +31,16 @@ const testClick = () => {
 </script>
 
 <template>
+  <Alert title="abc" type="success" effect="light" closeable/>
+  <Alert title="abc" description="123" type="success" effect="light" closeable/>
+  <Alert title="abc" description="123" type="success" effect="light" closeable showIcon/>
+  <Alert title="abc" description="123" type="info" effect="light" closeable showIcon/>
+  <Alert title="abc" description="123" type="warning" effect="light" closeable showIcon/>
+  <Alert title="abc" description="123" type="danger" effect="light" closeable showIcon/>
+  <Alert title="abc" type="success" effect="light" closeable showIcon/>
+  <Alert title="abc" type="info" effect="light" closeable showIcon/>
+  <Alert title="abc" type="warning" effect="light" closeable showIcon/>
+  <Alert title="abc" type="danger" effect="light" closeable showIcon/>
   <header>
     <img alt="Vue logo" class="logo" src="./assets/logo.svg" width="125" height="125" />
 

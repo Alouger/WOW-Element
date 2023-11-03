@@ -1,0 +1,80 @@
+.wow-alert {
+    --wow-alert-padding: 8px 16px;
+    --wow-alert-border-radius-base: var(--wow-border-radius-base);
+    --wow-alert-bg-color: var(--wow-color-white);
+    --wow-alert-title-font-size: 13px;
+    --wow-alert-description-font-size: 12px;
+    --wow-alert-icon-size: 16px;
+    --wow-alert-icon-large-size: 28px;
+    --wow-alert-text-color: var(--wow-text-color-primary);
+    --wow-alert-top-margin: 20px;
+  }
+  .wow-alert {
+    padding: var(--wow-alert-padding);
+    margin: 0;
+    box-sizing: border-box;
+    border-radius: var(--wow-alert-border-radius-base);
+    position: relative;
+    background-color: var(--wow-alert-bg-color);
+    overflow: hidden;
+    opacity: 1;
+    display: flex;
+    align-items: center;
+    transition: opacity var(--wow-transition-duration);
+    margin-top: var(--wow-alert-top-margin);
+    .wow-alert__content {
+      font-size: var(--wow-alert-title-font-size);
+      color:  var(--wow-alert-text-color);
+      line-height: 18px;
+      vertical-align: text-top;
+      .wow-alert__title {
+        font-size: var(--wow-alert-title-font-size);
+      }
+      .wow-alert__description {
+        font-size: var(--wow-alert-description-font-size);
+      }
+    }
+    .wow-alert__close {
+      font-size: var(--el-alert-close-font-size);
+      opacity: 1;
+      position: absolute;
+      top: 12px;
+      right: 15px;
+      cursor: pointer;
+      .wow-icon {
+        vertical-align: top;
+      }
+    }
+    &.wow-alert__light {
+      .wow-alert__close {
+        color: var(--wow-text-color-placeholder);
+      }
+    }
+    &.wow-alert__dark {
+      .wow-alert__close {
+        color: var(--wow-color-white);
+      }
+    }
+    [class*=wow-icon] + div {
+      margin-left: 6px;
+    }
+    .wow-alert__icon {
+      margin-right: 6px;
+    }
+}
+
+.wow-alert-fade-enter-from,
+.wow-alert-fade-leave-to {
+  opacity: 0;
+}
+
+@each $val in success,warning,info,danger { 
+    .wow-alert__$(val).wow-alert__light {
+      --wow-alert-text-color: var(--wow-color-$(val));
+      --wow-alert-bg-color: var(--wow-color-$(val)-light-9);
+    }
+    .wow-alert__$(val).wow-alert__dark {
+      --wow-alert-text-color: var(--wow-color-white);
+      --wow-alert-bg-color: var(--wow-color-$(val));
+    }
+  }
