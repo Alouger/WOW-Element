@@ -3,10 +3,13 @@
 import Button from './components/Button/Button.vue'
 import type { ButtonInstance } from './components/Button/types'
 import { ref, onMounted } from 'vue'
+import { createPopper } from '@popperjs/core'
+import type { Instance } from '@popperjs/core'
 import Collapse from './components/Collapse/Collapse.vue'
 import Item from './components/Collapse/CollapseItem.vue'
 import Icon from './components/Icon/Icon.vue'
 import Alert from './components/Alert/Alert.vue'
+import Tooltip from './components/Tooltip/Tooltip.vue'
 
 // 我们预设name为a的collapseItem是打开的
 const openedValue = ref(['a']);
@@ -23,6 +26,7 @@ onMounted(() => {
   setTimeout(() => {
     openedValue.value = ['a', 'b']
     size.value ='2xl'
+    popperInstance?.setOptions({ placement: 'bottom' })
   }, 2000);
 })
 const testClick = () => {
@@ -42,10 +46,12 @@ const testClick = () => {
   <Alert title="abc" type="warning" effect="light" closeable showIcon/>
   <Alert title="abc" type="danger" effect="light" closeable showIcon/>
   <header>
-    <img alt="Vue logo" class="logo" src="./assets/logo.svg" width="125" height="125" />
-
-    <div class="wrapper">
-    </div>
+    <Tooltip placement="right">
+      <img alt="Vue logo" class="logo" src="./assets/logo.svg" width="125" height="125"/>
+      <template #content>
+        <h1>Hello tooltip</h1>
+      </template>
+    </Tooltip>
   </header>
   <Icon icon="arrow-up" :size="size" type="danger" color="#0e7a0d" />
   <main>
