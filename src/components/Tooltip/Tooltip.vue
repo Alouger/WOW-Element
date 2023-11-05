@@ -12,28 +12,31 @@
         <!-- 这里是个默认的slot，哪个节点触发就写在这里面 -->
         <slot />
       </div>
-      <div
-        v-if="isOpen"
-        class="wow-tooltip__popper"
-        ref="popperNode"
-      >
-        <slot name="content">
-            {{ content }}
-        </slot>
-      </div>
+      <Transition :name="transition">
+        <div
+          v-if="isOpen"
+          class="wow-tooltip__popper"
+          ref="popperNode"
+        >
+          <slot name="content">
+              {{ content }}
+          </slot>
+        </div>
+      </Transition>
     </div>
 </template>
 
 <script setup lang="ts">
 import { createPopper } from '@popperjs/core'
 import type { Instance } from '@popperjs/core'
-import { TooltipProps, TooltipEmits } from "./types";
-import { ref, watch, reactive } from 'vue'
+import { TooltipProps, TooltipEmits, TooltipInstance } from "./types";
+import { ref, watch, reactive, onUnmounted, computed } from 'vue'
 import useClickOutside from '../../hooks/useClickOutside'
 
 const props = withDefaults(defineProps<TooltipProps>(), {
   placement: 'bottom',
-  trigger: 'hover'
+  trigger: 'hover',
+  transition: 'fade'
 })
 const emits = defineEmits<TooltipEmits>()
 // 该响应式变量用来控制浮层节点的显示与隐藏
@@ -48,6 +51,13 @@ let popperInstance: Instance | null = null
 // v-on可以接受一个object作为参数，对object中的每一项都可以作为对应的事件回调
 let events: Record<string, any> = reactive({})
 let outerEvents: Record<string, any> = reactive({})
+const popperOptions = computed(() => {
+  return {
+    // 我们自己定的placement属性比popper.js的Options里的placement优先级低，所以放在前面
+    placement: props.placement,
+    ...props.popperOptions
+  }
+})
 // 创建一个function，使得触发节点被点击后，能够对响应式变量isOpen进行取反，让浮层节点进行切换显示或隐藏
 const togglePopper = () => {
     isOpen.value = !isOpen.value
@@ -72,13 +82,27 @@ const attachEvents = () => {
   }
 }
 useClickOutside(popperContainerNode, () => {
-  // 当为点击触发方式并且Tooltip浮层显示的时候才进行close()
-  if (props.trigger == 'click' && isOpen.value) {
+  // 当为点击触发方式并且Tooltip浮层显示，还有非手动模式的时候才进行close()
+  if (props.trigger == 'click' && isOpen.value && !props.manual) {
     close()
   }
 })
-// 在setup的时候执行一次attachEvents，让这个函数内的事件绑定到模版上
-attachEvents()
+// 如果是手动模式下，应该是没有添加任何的events，也就是我们的hover和click应该都不会运作
+if (!props.manual) {
+  // 在setup的时候执行一次attachEvents，让这个函数内的事件绑定到模版上
+  attachEvents()
+}
+// 用一个watch来监控props.manual，并且回调函数的参数传入isManual，表示是否启动了手动模式
+watch(() => props.manual, (isManual) => {
+  if (isManual) {
+    // 如果isManual为true，也就是在手动模式下，要先把events和outerEvents里面的事件给清空掉
+    events = {}
+    outerEvents = {}
+  } else {
+    // 如果为false，不在手动模式下了，就重新绑定事件attachEvents()
+    attachEvents()
+  }
+})
 watch(() => props.trigger, (newTrigger, oldTrigger) => {
   if (newTrigger != oldTrigger) {
     // trigger方式改变了，先把事件列表清空，因为变量events和outerEvents里面是写入一些事件了的
@@ -92,9 +116,7 @@ watch(() => props.trigger, (newTrigger, oldTrigger) => {
 watch(isOpen, (newValue) => {
   if (newValue) {
     if (triggerNode.value && popperNode.value) {
-      popperInstance = createPopper(triggerNode.value, popperNode.value, {
-        placement: props.placement
-      })
+      popperInstance = createPopper(triggerNode.value, popperNode.value, popperOptions.value)
     } else {
       // 隐藏的时候，我们要把它给销毁掉，这个Instance上有对应的方法来销毁
       popperInstance?.destroy()
@@ -102,4 +124,17 @@ watch(isOpen, (newValue) => {
   }
   // 我们要展示的popperNode是要等到dom节点生成以后才可以进行调用，所以我们要设置这个watch的触发时间，我们设为flush: post，这就是等dom节点生成
 }, { flush: 'post'})
+
+// 我们的popperInstance创建完毕后，但是在卸载的时候没有给它卸载掉，我们应该将其卸载，而不仅仅在隐藏的时候进行destroy
+onUnmounted(() => {
+  // 隐藏的时候，我们要把它给销毁掉，这个Instance上有对应的方法来销毁
+  popperInstance?.destroy()
+})
+
+// 暴露手动模式下方法出去给用户，比如用户调用show或者hinde时，内部就会调用open或close
+defineExpose<TooltipInstance>({
+  'show': open,
+  'hide': close
+})
+
 </script>

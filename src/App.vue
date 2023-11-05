@@ -5,11 +5,13 @@ import type { ButtonInstance } from './components/Button/types'
 import { ref, onMounted } from 'vue'
 import { createPopper } from '@popperjs/core'
 import type { Instance } from '@popperjs/core'
+import type { TooltipInstance } from './components/Tooltip/types'
 import Collapse from './components/Collapse/Collapse.vue'
 import Item from './components/Collapse/CollapseItem.vue'
 import Icon from './components/Icon/Icon.vue'
 import Alert from './components/Alert/Alert.vue'
 import Tooltip from './components/Tooltip/Tooltip.vue'
+import type { Options } from '@popperjs/core'
 
 // 我们预设name为a的collapseItem是打开的
 const openedValue = ref(['a']);
@@ -17,9 +19,19 @@ const openedValue = ref(['a']);
 // 通过ref拿到button的dom节点，注意模板中的ref属性值要和我们script中的变量名一样
 // 一开始buttonRef会是null类型，所以要用联合类型加上null
 const buttonRef = ref<ButtonInstance | null>(null)
+const tooltipRef = ref<TooltipInstance | null>(null)
 const size = ref<any>('3x')
 // 创建触发方式的一个变量
 const trigger = ref<any>('click')
+// popper参数
+const options: Patial<Options> = { placement: 'right-end', strategy: 'fixed'}
+// 创建两个由Tooltip暴露的方法
+const open = () => {
+  tooltipRef.value?.show()
+}
+const close = () => {
+  tooltipRef.value?.hide()
+}
 onMounted(() => {
   if (buttonRef.value) {
     // ref自动解包
@@ -38,7 +50,7 @@ const testClick = () => {
 
 <template>
   <header>
-  <Tooltip placement="right" :trigger="trigger">
+  <Tooltip placement="right" :trigger="trigger" ref="tooltipRef" :popper-options="options">
     <img alt="Vue logo" class="logo" src="./assets/logo.svg" width="125" height="125"/>
     <template #content>
       <h1>Hello tooltip</h1>
@@ -58,8 +70,8 @@ const testClick = () => {
 
   <Icon icon="arrow-up" :size="size" type="danger" color="#0e7a0d" />
   <main>
-    <Button ref="buttonRef" @click="testClick">Test Button</Button>
-    <Button plain>Plain Button</Button>
+    <Button ref="buttonRef" @click="open">Test Button</Button>
+    <Button plain @click="close">Plain Button</Button>
     <Button round>Round Button</Button>
     <Button circle>VK</Button>
     <Button disabled>Disabled Button</Button><br/><br/>
