@@ -1,6 +1,7 @@
 <template>
     <div
       class="wow-tooltip"
+      ref="popperContainerNode"
       v-on="outerEvents"
     >
       <div
@@ -28,6 +29,7 @@ import { createPopper } from '@popperjs/core'
 import type { Instance } from '@popperjs/core'
 import { TooltipProps, TooltipEmits } from "./types";
 import { ref, watch, reactive } from 'vue'
+import useClickOutside from '../../hooks/useClickOutside'
 
 const props = withDefaults(defineProps<TooltipProps>(), {
   placement: 'bottom',
@@ -39,6 +41,8 @@ const isOpen = ref(false)
 // 创建两个DOM节点
 const popperNode = ref<HTMLElement>()
 const triggerNode = ref<HTMLElement>()
+// 这是给父层元素wow-tooltip的Dom节点
+const popperContainerNode = ref<HTMLElement>()
 // 新建浮层的实例，网页打开是初始类型可能是null，所以用联合类型，Instance是popperjs提供的类型
 let popperInstance: Instance | null = null
 // v-on可以接受一个object作为参数，对object中的每一项都可以作为对应的事件回调
@@ -67,6 +71,12 @@ const attachEvents = () => {
     events['click'] = togglePopper
   }
 }
+useClickOutside(popperContainerNode, () => {
+  // 当为点击触发方式并且Tooltip浮层显示的时候才进行close()
+  if (props.trigger == 'click' && isOpen.value) {
+    close()
+  }
+})
 // 在setup的时候执行一次attachEvents，让这个函数内的事件绑定到模版上
 attachEvents()
 watch(() => props.trigger, (newTrigger, oldTrigger) => {
