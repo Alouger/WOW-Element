@@ -12,6 +12,8 @@ import Icon from './components/Icon/Icon.vue'
 import Alert from './components/Alert/Alert.vue'
 import Tooltip from './components/Tooltip/Tooltip.vue'
 import type { Options } from '@popperjs/core'
+import Dropdown from './components/Dropdown/Dropdown.vue'
+import type { MenuOption } from './components/Dropdown/types'
 
 // 我们预设name为a的collapseItem是打开的
 const openedValue = ref(['a']);
@@ -25,6 +27,13 @@ const size = ref<any>('3x')
 const trigger = ref<any>('hover')
 // popper参数
 const options: Patial<Options> = { placement: 'right-end', strategy: 'fixed'}
+// Dropdown的options变量
+const dropdownOptions: MenuOption[] =  [
+  {key: 1, label: 'item1'},
+  {key: 2, label: 'item2', disabled: true},
+  {key: 3, label: 'item3', divided: true},
+  {key: 4, label: 'item4'},
+]
 // 创建两个由Tooltip暴露的方法
 const open = () => {
   tooltipRef.value?.show()
@@ -50,6 +59,10 @@ const testClick = () => {
 
 <template>
   <header>
+  <Dropdown placement="bottom" :trigger="trigger" :menu-options="dropdownOptions">
+    <img alt="Vue logo" class="logo" src="./assets/logo.svg" width="125" height="125"/>
+  </Dropdown>
+
   <Tooltip placement="right" :trigger="trigger" ref="tooltipRef" :popper-options="options" :open-delay="1000" :closeDelay="1000">
     <img alt="Vue logo" class="logo" src="./assets/logo.svg" width="125" height="125"/>
     <template #content>
