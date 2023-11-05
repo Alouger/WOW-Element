@@ -18,6 +18,8 @@ const openedValue = ref(['a']);
 // 一开始buttonRef会是null类型，所以要用联合类型加上null
 const buttonRef = ref<ButtonInstance | null>(null)
 const size = ref<any>('3x')
+// 创建触发方式的一个变量
+const trigger = ref<any>('click')
 onMounted(() => {
   if (buttonRef.value) {
     // ref自动解包
@@ -26,7 +28,7 @@ onMounted(() => {
   setTimeout(() => {
     openedValue.value = ['a', 'b']
     size.value ='2xl'
-    popperInstance?.setOptions({ placement: 'bottom' })
+    trigger.value = 'hover'
   }, 2000);
 })
 const testClick = () => {
@@ -35,6 +37,14 @@ const testClick = () => {
 </script>
 
 <template>
+  <header>
+  <Tooltip placement="right" :trigger="trigger">
+    <img alt="Vue logo" class="logo" src="./assets/logo.svg" width="125" height="125"/>
+    <template #content>
+      <h1>Hello tooltip</h1>
+    </template>
+  </Tooltip>
+  </header>
   <Alert title="abc" type="success" effect="light" closeable/>
   <Alert title="abc" description="123" type="success" effect="light" closeable/>
   <Alert title="abc" description="123" type="success" effect="light" closeable showIcon/>
@@ -45,14 +55,7 @@ const testClick = () => {
   <Alert title="abc" type="info" effect="light" closeable showIcon/>
   <Alert title="abc" type="warning" effect="light" closeable showIcon/>
   <Alert title="abc" type="danger" effect="light" closeable showIcon/>
-  <header>
-    <Tooltip placement="right">
-      <img alt="Vue logo" class="logo" src="./assets/logo.svg" width="125" height="125"/>
-      <template #content>
-        <h1>Hello tooltip</h1>
-      </template>
-    </Tooltip>
-  </header>
+
   <Icon icon="arrow-up" :size="size" type="danger" color="#0e7a0d" />
   <main>
     <Button ref="buttonRef" @click="testClick">Test Button</Button>

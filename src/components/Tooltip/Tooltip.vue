@@ -1,11 +1,12 @@
 <template>
     <div
       class="wow-tooltip"
+      v-on="outerEvents"
     >
       <div
         class="wow-tooltip__trigger"
         ref="triggerNode"
-        @click="togglePopper"
+        v-on="events"
       >
         <!-- 这里是个默认的slot，哪个节点触发就写在这里面 -->
         <slot />
@@ -26,10 +27,11 @@
 import { createPopper } from '@popperjs/core'
 import type { Instance } from '@popperjs/core'
 import { TooltipProps, TooltipEmits } from "./types";
-import { ref, watch } from 'vue'
+import { ref, watch, reactive } from 'vue'
 
 const props = withDefaults(defineProps<TooltipProps>(), {
-  placement: 'bottom'
+  placement: 'bottom',
+  trigger: 'hover'
 })
 const emits = defineEmits<TooltipEmits>()
 // 该响应式变量用来控制浮层节点的显示与隐藏
@@ -39,11 +41,43 @@ const popperNode = ref<HTMLElement>()
 const triggerNode = ref<HTMLElement>()
 // 新建浮层的实例，网页打开是初始类型可能是null，所以用联合类型，Instance是popperjs提供的类型
 let popperInstance: Instance | null = null
-// 创建一个function，使得触发节点被触发后，能够对响应式变量isOpen进行取反，让浮层节点进行切换显示或隐藏
+// v-on可以接受一个object作为参数，对object中的每一项都可以作为对应的事件回调
+let events: Record<string, any> = reactive({})
+let outerEvents: Record<string, any> = reactive({})
+// 创建一个function，使得触发节点被点击后，能够对响应式变量isOpen进行取反，让浮层节点进行切换显示或隐藏
 const togglePopper = () => {
     isOpen.value = !isOpen.value
     emits('visible-change', isOpen.value)
 }
+// hover方式的触发回调函数
+const open = () => {
+  isOpen.value = true
+  emits('visible-change', true)
+}
+// hover方式的结束触发回调函数
+const close = () => {
+  isOpen.value = false
+  emits('visible-change', false)
+}
+const attachEvents = () => {
+  if (props.trigger == 'hover') {
+    events['mouseenter'] = open
+    outerEvents['mouseleave'] = close
+  } else if (props.trigger == 'click') {
+    events['click'] = togglePopper
+  }
+}
+// 在setup的时候执行一次attachEvents，让这个函数内的事件绑定到模版上
+attachEvents()
+watch(() => props.trigger, (newTrigger, oldTrigger) => {
+  if (newTrigger != oldTrigger) {
+    // trigger方式改变了，先把事件列表清空，因为变量events和outerEvents里面是写入一些事件了的
+    events = {}
+    outerEvents = {}
+    // 绑定一下
+    attachEvents()
+  }
+})
 // 用watch在显示或隐藏的同时就可以创建对应的popper实例
 watch(isOpen, (newValue) => {
   if (newValue) {
