@@ -22,7 +22,7 @@ const buttonRef = ref<ButtonInstance | null>(null)
 const tooltipRef = ref<TooltipInstance | null>(null)
 const size = ref<any>('3x')
 // 创建触发方式的一个变量
-const trigger = ref<any>('click')
+const trigger = ref<any>('hover')
 // popper参数
 const options: Patial<Options> = { placement: 'right-end', strategy: 'fixed'}
 // 创建两个由Tooltip暴露的方法
@@ -50,7 +50,7 @@ const testClick = () => {
 
 <template>
   <header>
-  <Tooltip placement="right" :trigger="trigger" ref="tooltipRef" :popper-options="options">
+  <Tooltip placement="right" :trigger="trigger" ref="tooltipRef" :popper-options="options" :open-delay="1000" :closeDelay="1000">
     <img alt="Vue logo" class="logo" src="./assets/logo.svg" width="125" height="125"/>
     <template #content>
       <h1>Hello tooltip</h1>

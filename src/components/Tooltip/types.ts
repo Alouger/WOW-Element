@@ -6,7 +6,12 @@ export interface TooltipProps {
   manual?: boolean;
   // 为了让Options里面的必选参数在此变成可选，需要用Partial
   popperOptions?: Partial<Options>;
+  // 动画
   transition?: string;
+  // 打开延迟
+  openDelay?: number;
+  // 关闭延迟
+  closeDelay?: number;
 }
 
 // 对应的事件
