@@ -21,6 +21,7 @@
           <slot name="content">
               {{ content }}
           </slot>
+          <div id="arrow" data-popper-arrow></div>
         </div>
       </Transition>
     </div>
@@ -62,6 +63,14 @@ const popperOptions = computed(() => {
   return {
     // 我们自己定的placement属性比popper.js的Options里的placement优先级低，所以放在前面
     placement: props.placement,
+    modifiers: [
+      {
+        name: 'offset',
+        options: {
+          offset: [0, 9]
+        },
+      }
+    ],
     ...props.popperOptions
   }
 })
