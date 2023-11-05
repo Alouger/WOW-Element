@@ -1,0 +1,44 @@
+.wow-dropdown .wow-dropdown__menu {
+    --wow-dropdown-menuItem-hover-fill: var(--wow-color-primary-light-9);
+    --wow-dropdown-menuItem-hover-color: var(--wow-color-primary);
+    --wow-dropdown-menuItem-disabled-color: var(--wow-border-color-lighter);
+    --wow-dropdown-menuItem-divided-color: var(--wow-border-color-lighter);
+  }
+  .wow-dropdown {
+    display: inline-block;
+    .wow-tooltip {
+      --wow-popover-padding: 5px 0;
+    }
+  }
+  .wow-dropdown__menu {
+    list-style-type: none;
+    margin: 0;
+    padding: 0;
+    .wow-dropdown__item {
+      display: flex;
+      align-items: center;
+      white-space: nowrap;
+      list-style: none;
+      line-height: 22px;
+      padding: 5px 16px;
+      margin: 0;
+      font-size: var(--wow-font-size-base);
+      color: var(--wow-text-color-regular);
+      cursor: pointer;
+      outline: none;
+      &:hover {
+        background-color: var(--wow-dropdown-menuItem-hover-fill);
+        color: var(--wow-dropdown-menuItem-hover-color);
+      }
+      &.is-disabled {
+        color: var(--wow-dropdown-menuItem-disabled-color);
+        cursor: not-allowed;
+        background-image: none;
+      }
+    }
+    .divided-placeholder {
+      margin: 6px 0;
+      border-top: 1px solid var(--wow-dropdown-menuItem-divided-color);
+    }
+  }
+  
