@@ -2,7 +2,8 @@ import type { VNode } from 'vue'
 import type { TooltipProps } from '../Tooltip/types'
 
 export interface DropdownProps extends TooltipProps {
-  menuOptions: []
+  menuOptions: MenuOption[];
+  hideAfterClick?: boolean;
 }
 
 export interface MenuOption {

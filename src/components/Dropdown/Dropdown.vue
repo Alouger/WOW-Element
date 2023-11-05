@@ -26,7 +26,9 @@
               :id="`dropdown-item-${item.key}`"
               @click="itemClick(item)"
             >
-              {{ item.label }}
+              <!-- 我们用的2个花括号的语法进行包裹的时候，如果这里面是一个对象，它会把整个对象都直接展开，不会生成一个对应的节点 -->
+              <!-- {{ item.label }} -->
+              <RenderVnode :vNode="item.label"/>
             </li>
           </template>
         </ul>
@@ -41,8 +43,11 @@ import Tooltip from '../Tooltip/Tooltip.vue'
 import { ref } from 'vue'
 import type { Ref } from 'vue'
 import type { TooltipInstance } from '../Tooltip/types'
+import RenderVnode from '../Common/RenderVnode'
 
-const props = defineProps<DropdownProps>()
+const props = withDefaults(defineProps<DropdownProps>(), {
+  hideAfterClick: true
+})
 const emits = defineEmits<DropdownEmits>()
 const tooltipRef = ref() as Ref<TooltipInstance>
 
@@ -54,6 +59,9 @@ const itemClick = (e: MenuOption) => {
     return
   }
   emits('select', e)
+  if (props.hideAfterClick) {
+    tooltipRef.value.hide()
+  }
 }
 defineExpose<DropdownInstance>({
   show: tooltipRef.value?.show,

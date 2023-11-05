@@ -2,7 +2,7 @@
 // 测试Button
 import Button from './components/Button/Button.vue'
 import type { ButtonInstance } from './components/Button/types'
-import { ref, onMounted } from 'vue'
+import { ref, onMounted, h } from 'vue'
 import { createPopper } from '@popperjs/core'
 import type { Instance } from '@popperjs/core'
 import type { TooltipInstance } from './components/Tooltip/types'
@@ -24,12 +24,12 @@ const buttonRef = ref<ButtonInstance | null>(null)
 const tooltipRef = ref<TooltipInstance | null>(null)
 const size = ref<any>('3x')
 // 创建触发方式的一个变量
-const trigger = ref<any>('hover')
+const trigger = ref<any>('click')
 // popper参数
 const options: Patial<Options> = { placement: 'right-end', strategy: 'fixed'}
 // Dropdown的options变量
 const dropdownOptions: MenuOption[] =  [
-  {key: 1, label: 'item1'},
+  {key: 1, label: h('b', 'this is bold')},
   {key: 2, label: 'item2', disabled: true},
   {key: 3, label: 'item3', divided: true},
   {key: 4, label: 'item4'},
