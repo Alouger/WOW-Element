@@ -14,3 +14,10 @@ export interface MessageProps {
 
 // omit忽略掉onDestroy这个属性，不需要传入
 export type CreateMessageProps = Omit<MessageProps, 'onDestroy'>
+
+export interface MessageContext {
+  // 我们希望有id属性，可以甄别不同的message组件实例
+  id: string;
+  vnode: VNode;
+  props: MessageProps;
+}

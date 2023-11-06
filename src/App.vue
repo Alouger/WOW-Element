@@ -45,7 +45,8 @@ const close = () => {
 }
 onMounted(() => {
   createMessage({ message: 'hello world', duration: 0})
-  createMessage({ message: 'hello world again'})
+  createMessage({ message: 'hello world again', duration: 0})
+  createMessage({ message: 'hello world three', duration: 0})
   if (buttonRef.value) {
     // ref自动解包
     console.log('buttonRef', buttonRef.value.ref);

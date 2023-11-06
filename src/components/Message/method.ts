@@ -1,12 +1,25 @@
 // h用来生成VNode
 import { render, h } from 'vue'
-import type { CreateMessageProps } from './types'
+import type { CreateMessageProps, MessageContext } from './types'
 import MessageConstructor from './Message.vue'
 
+// 创建id，每次调用createMessage，自动加1，作为新的id
+let seed = 1
+// 该变量存储多个创建好的Message组件实例，初始为空数组
+const instances: MessageContext[] = []
+
 export const createMessage = (props: CreateMessageProps) => {
+  // 创建id
+  const id = `message_${seed++}`
   // 先创建一个container，因为我们用render函数的话，其第二个参数要传入DOM节点
   const container = document.createElement('div')
   const destroy = () => {
+    // 删除数组中的实例
+    const idx = instances.findIndex(instance => instance.id == id)
+    // 如果没找到对应id的实例，直接return
+    if (idx == -1) return
+    // 根据id删除数组中的实例
+    instances.splice(idx, 1)
     render(null, container)
   }
   // 重新包装props，让它自动获取一些新的属性。newProps会被传入到Message.vue中
@@ -25,4 +38,19 @@ export const createMessage = (props: CreateMessageProps) => {
   // 这是一个类型断言的快捷方式
   document.body.appendChild(container.firstElementChild!)
 
+  // 创建这次新建的message组件的实例，然后把此实例push到instances变量里
+  const instance = {
+    id,
+    vnode,
+    props: newProps
+  }
+  instances.push(instance)
+  // return创建好的instance，好处在于后期再实例上添加一些对应的属性和方法，都可以返回到这个实例中，供这个对应的调用者进行一个调用
+  return instance
+}
+
+// 跟我们的需求相关，我们只需要拿到上一个创建好的instance
+export const getLastInstance = () => {
+    // 拿到数组的最后一项
+    return instances.at(-1)
 }

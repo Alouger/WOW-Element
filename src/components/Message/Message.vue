@@ -28,6 +28,7 @@ import type { MessageProps } from './types'
 import RenderVnode from '../Common/RenderVnode'
 import Icon from '../Icon/Icon.vue'
 import { ref, onMounted, watch } from 'vue'
+import { getLastInstance } from './method'
 
 const props = withDefaults(defineProps<MessageProps>(), {
   type: 'info',
@@ -35,6 +36,9 @@ const props = withDefaults(defineProps<MessageProps>(), {
 });
 // 控制message组件是否可见
 const visible = ref(false)
+// 获取最新创建的message组件实例
+const prevInstance = getLastInstance()
+console.log('prev', prevInstance);
 
 const startTimer = () => {
   if (props.duration == 0) return
