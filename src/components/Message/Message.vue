@@ -9,6 +9,8 @@
     role="alert"
     ref="messageRef"
     :style="cssStyle"
+    @mouseenter="clearTimer"
+    @mouseleave="startTimer"
   >
     <!-- 信息显示内容 -->
     <div class="wow-message__content">
@@ -33,6 +35,7 @@ import RenderVnode from '../Common/RenderVnode'
 import Icon from '../Icon/Icon.vue'
 import { ref, onMounted, watch, computed, nextTick, getCurrentInstance } from 'vue'
 import { getLastInstance, getLastBottomOffset } from './method'
+import useEventListener from '../../hooks/useEventListener'
 
 const props = withDefaults(defineProps<MessageProps>(), {
   type: 'info',
@@ -59,13 +62,20 @@ const cssStyle = computed(() => ({
   zIndex: props.zIndex
 }))
 
+// setTimeout返回的是Nodejs.Timeout类型，所以我们把timer设为any类型
+let timer: any
 // 源代码里写的是function startTimer()
 const startTimer = () => {
   if (props.duration == 0) return
-  setTimeout(() => {
+  timer = setTimeout(() => {
     visible.value = false
   }, props.duration);
 }
+// 清除计时器
+function clearTimer() {
+  clearTimeout(timer)
+}
+
 onMounted(async () => {
   visible.value = true
   startTimer()
@@ -73,6 +83,16 @@ onMounted(async () => {
   // !是非空断言操作符   .getBoundingClientRect().height动态获取组件的高度
   height.value = messageRef.value!.getBoundingClientRect().height
 })
+// 键盘按下的回调, 使visible变为false，message隐藏销毁
+function keydown(e: Event) {
+  // 获取键盘上的物理键code值
+  const event = e as KeyboardEvent
+  if (event.code == 'Escape') {
+    visible.value = false
+  }
+}
+useEventListener(document, 'keydown', keydown)
+
 watch(visible, (newValue) => {
   if (!newValue) {
     // 如果visible的newValue是false，直接调用onDestroy

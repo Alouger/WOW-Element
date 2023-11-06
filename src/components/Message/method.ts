@@ -36,7 +36,7 @@ export const createMessage = (props: CreateMessageProps) => {
   const newProps = {
     ...props,
     id,
-    zIndex: nextZIndex,
+    zIndex: nextZIndex(),
     onDestroy: destroy
   }
   const vnode = h(MessageConstructor, newProps)
