@@ -15,6 +15,7 @@ import type { Options } from '@popperjs/core'
 import Dropdown from './components/Dropdown/Dropdown.vue'
 import type { MenuOption } from './components/Dropdown/types'
 import Message from './components/Message/Message.vue'
+import { createMessage } from './components/Message/method'
 
 // 我们预设name为a的collapseItem是打开的
 const openedValue = ref(['a']);
@@ -43,6 +44,8 @@ const close = () => {
   tooltipRef.value?.hide()
 }
 onMounted(() => {
+  createMessage({ message: 'hello world', duration: 0})
+  createMessage({ message: 'hello world again'})
   if (buttonRef.value) {
     // ref自动解包
     console.log('buttonRef', buttonRef.value.ref);
@@ -59,7 +62,7 @@ const testClick = () => {
 </script>
 
 <template>
-  <Message message="hello message" :duration="0" show-close/>
+
   <header>
   <Dropdown placement="bottom" :trigger="trigger" :menu-options="dropdownOptions">
     <img alt="Vue logo" class="logo" src="./assets/logo.svg" width="125" height="125"/>
