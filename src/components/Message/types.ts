@@ -8,4 +8,9 @@ export interface MessageProps {
   duration?: number;
   showClose?: boolean;
   type?: 'success' | 'info' | 'warning' | 'error'
+  // 必选
+  onDestroy: () => void;
 }
+
+// omit忽略掉onDestroy这个属性，不需要传入
+export type CreateMessageProps = Omit<MessageProps, 'onDestroy'>

@@ -1,12 +1,20 @@
 // h用来生成VNode
 import { render, h } from 'vue'
-import type { MessageProps } from './types'
+import type { CreateMessageProps } from './types'
 import MessageConstructor from './Message.vue'
 
-export const createMessage = (props: MessageProps) => {
+export const createMessage = (props: CreateMessageProps) => {
   // 先创建一个container，因为我们用render函数的话，其第二个参数要传入DOM节点
   const container = document.createElement('div')
-  const vnode = h(MessageConstructor, props)
+  const destroy = () => {
+    render(null, container)
+  }
+  // 重新包装props，让它自动获取一些新的属性。newProps会被传入到Message.vue中
+  const newProps = {
+    ...props,
+    onDestroy: destroy
+  }
+  const vnode = h(MessageConstructor, newProps)
   render(vnode, container)
   
   // 虽然渲染完毕了，但这个dom节点还没有真正插入到我们的文档当中，现在来进行插入

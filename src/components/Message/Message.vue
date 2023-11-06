@@ -27,7 +27,7 @@
 import type { MessageProps } from './types'
 import RenderVnode from '../Common/RenderVnode'
 import Icon from '../Icon/Icon.vue'
-import { ref, onMounted } from 'vue'
+import { ref, onMounted, watch } from 'vue'
 
 const props = withDefaults(defineProps<MessageProps>(), {
   type: 'info',
@@ -46,9 +46,15 @@ onMounted(() => {
   visible.value = true
   startTimer()
 })
+watch(visible, (newValue) => {
+  if (!newValue) {
+    // 如果visible的newValue是false，直接调用onDestroy
+    props.onDestroy()
+  }
+})
 </script>
 
-<style>
+<style scoped>
 .wow-message {
   width: max-content;
   position: fixed;
