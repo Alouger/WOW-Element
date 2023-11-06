@@ -44,7 +44,7 @@ const close = () => {
   tooltipRef.value?.hide()
 }
 onMounted(() => {
-  createMessage({ message: 'hello world', duration: 0})
+  const instance = createMessage({ message: 'hello world', duration: 0})
   createMessage({ message: 'hello world again', duration: 0})
   createMessage({ message: 'hello world three', duration: 0})
   if (buttonRef.value) {
@@ -55,6 +55,7 @@ onMounted(() => {
     openedValue.value = ['a', 'b']
     size.value ='2xl'
     // trigger.value = 'hover'
+    instance.destroy()
   }, 2000);
 })
 const testClick = () => {

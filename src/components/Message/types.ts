@@ -12,11 +12,12 @@ export interface MessageProps {
   onDestroy: () => void;
   id: string;
   // 组件之间的间隔
-  offset?: number
+  offset?: number;
+  zIndex: number
 }
 
 // omit忽略掉onDestroy这个属性和id，不需要传入，因为id是createMessage函数里自动生成的id
-export type CreateMessageProps = Omit<MessageProps, 'onDestroy' | 'id'>
+export type CreateMessageProps = Omit<MessageProps, 'onDestroy' | 'id' | 'zIndex'>
 
 export interface MessageContext {
   // 我们希望有id属性，可以甄别不同的message组件实例
@@ -25,4 +26,5 @@ export interface MessageContext {
   // 得到的内部实例
   vm: ComponentInternalInstance;
   props: MessageProps;
+  destory: () => void;
 }

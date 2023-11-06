@@ -55,7 +55,8 @@ const topOffset = computed(() => props.offset + lastOffset.value)
 // 为了把这个bottomOffset暴露出去给下一个元素使用，也要放到defineExpose里
 const bottomOffset = computed(() => height.value + topOffset.value)
 const cssStyle = computed(() => ({
-  top: topOffset.value + 'px'
+  top: topOffset.value + 'px',
+  zIndex: props.zIndex
 }))
 
 // 源代码里写的是function startTimer()
@@ -80,7 +81,8 @@ watch(visible, (newValue) => {
 })
 defineExpose({
   // 名称相同，只写一个
-  bottomOffset
+  bottomOffset,
+  visible
 })
 </script>
 

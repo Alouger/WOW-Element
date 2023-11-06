@@ -2,6 +2,7 @@
 import { render, h, shallowReactive } from 'vue'
 import type { CreateMessageProps, MessageContext } from './types'
 import MessageConstructor from './Message.vue'
+import useZIndex from '../../hooks/useZIndex'
 
 // 创建id，每次调用createMessage，自动加1，作为新的id
 let seed = 1
@@ -9,7 +10,8 @@ let seed = 1
 const instances: MessageContext[] = shallowReactive([])
 
 export const createMessage = (props: CreateMessageProps) => {
-  // 创建id
+  const { nextZIndex } = useZIndex()
+    // 创建id
   const id = `message_${seed++}`
   // 先创建一个container，因为我们用render函数的话，其第二个参数要传入DOM节点
   const container = document.createElement('div')
@@ -22,10 +24,19 @@ export const createMessage = (props: CreateMessageProps) => {
     instances.splice(idx, 1)
     render(null, container)
   }
+  // 手动调用删除，其实就是手动的调整组件中的visible的值
+  // visible是通过expose传出来的
+  const manualDestroy = () => {
+    const instance = instances.find(instance => instance.id == id)
+    if (instance) {
+      instance.vm.exposed!.visible.value = false
+    }
+  }
   // 重新包装props，让它自动获取一些新的属性。newProps会被传入到Message.vue中
   const newProps = {
     ...props,
     id,
+    zIndex: nextZIndex,
     onDestroy: destroy
   }
   const vnode = h(MessageConstructor, newProps)
@@ -47,7 +58,8 @@ export const createMessage = (props: CreateMessageProps) => {
     vnode,
     // 内部实例
     vm,
-    props: newProps
+    props: newProps,
+    destroy: manualDestroy
   }
   instances.push(instance)
   // return创建好的instance，好处在于后期再实例上添加一些对应的属性和方法，都可以返回到这个实例中，供这个对应的调用者进行一个调用
