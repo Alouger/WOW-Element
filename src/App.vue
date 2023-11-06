@@ -44,9 +44,9 @@ const close = () => {
   tooltipRef.value?.hide()
 }
 onMounted(() => {
-  const instance = createMessage({ message: 'hello world'})
-  createMessage({ message: 'hello world again', duration: 0})
-  createMessage({ message: 'hello world three', duration: 0})
+  const instance = createMessage({ message: 'hello world', showClose: true})
+  createMessage({ message: 'hello world again', duration: 0, type: 'success', showClose: true})
+  createMessage({ message: 'hello world three', duration: 0, type: 'danger', showClose: true})
   if (buttonRef.value) {
     // ref自动解包
     console.log('buttonRef', buttonRef.value.ref);

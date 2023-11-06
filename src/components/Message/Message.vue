@@ -1,32 +1,38 @@
 <template>
-  <div
-    class="wow-message"
-    :class="{
-      [`wow-message--${type}`]: type,
-      'is-close': showClose
-    }"
-    v-show="visible"
-    role="alert"
-    ref="messageRef"
-    :style="cssStyle"
-    @mouseenter="clearTimer"
-    @mouseleave="startTimer"
+  <Transition
+    :name="transitionName"
+    @after-leave="destroyComponent"
+    @enter="updateHeight"
   >
-    <!-- 信息显示内容 -->
-    <div class="wow-message__content">
-      <!-- 如果不传slot，才会显示父组件传到该组件的props属性message的值 -->
-      <!-- RenderVnode可以渲染简单的字符串string类型或者复杂的VNode类型 -->
-      <slot>
-        <!-- 为了更好的观测，我把这些间隔值输出出来看看 -->
-        {{offset}} - {{topOffset}} - {{height}} - {{bottomOffset}}
-        <RenderVnode :vNode="message" v-if="message"/>
-      </slot>
+    <div
+      class="wow-message"
+      :class="{
+        [`wow-message--${type}`]: type,
+        'is-close': showClose
+      }"
+      v-show="visible"
+      role="alert"
+      ref="messageRef"
+      :style="cssStyle"
+      @mouseenter="clearTimer"
+      @mouseleave="startTimer"
+    >
+      <!-- 信息显示内容 -->
+      <div class="wow-message__content">
+        <!-- 如果不传slot，才会显示父组件传到该组件的props属性message的值 -->
+        <!-- RenderVnode可以渲染简单的字符串string类型或者复杂的VNode类型 -->
+        <slot>
+          <!-- 为了更好的观测，我把这些间隔值输出出来看看 -->
+          <!-- {{offset}} - {{topOffset}} - {{height}} - {{bottomOffset}} -->
+          <RenderVnode :vNode="message" v-if="message"/>
+        </slot>
+      </div>
+      <div class="wow-message__close" v-if="showClose">
+        <!-- @click.stop 阻止冒泡 -->
+        <Icon icon="xmark" @click.stop="visible = false"/>
+      </div>
     </div>
-    <div class="wow-message__close" v-if="showClose">
-      <!-- @click.stop 阻止冒泡 -->
-      <Icon icon="xmark" @click.stop="visible = false"/>
-    </div>
-  </div>
+  </Transition>
 </template>
 
 <script setup lang="ts">
@@ -40,7 +46,8 @@ import useEventListener from '../../hooks/useEventListener'
 const props = withDefaults(defineProps<MessageProps>(), {
   type: 'info',
   duration: 3000,
-  offset: 20
+  offset: 20,
+  transitionName: 'fade-up'
 });
 // 控制message组件是否可见
 const visible = ref(false)
@@ -79,9 +86,9 @@ function clearTimer() {
 onMounted(async () => {
   visible.value = true
   startTimer()
-  await nextTick()  // 等DOM节点更新完毕
-  // !是非空断言操作符   .getBoundingClientRect().height动态获取组件的高度
-  height.value = messageRef.value!.getBoundingClientRect().height
+  // await nextTick()  // 等DOM节点更新完毕
+  // // !是非空断言操作符   .getBoundingClientRect().height动态获取组件的高度
+  // height.value = messageRef.value!.getBoundingClientRect().height
 })
 // 键盘按下的回调, 使visible变为false，message隐藏销毁
 function keydown(e: Event) {
@@ -93,26 +100,23 @@ function keydown(e: Event) {
 }
 useEventListener(document, 'keydown', keydown)
 
-watch(visible, (newValue) => {
-  if (!newValue) {
-    // 如果visible的newValue是false，直接调用onDestroy
-    props.onDestroy()
-  }
-})
+// watch(visible, (newValue) => {
+//   if (!newValue) {
+//     // 如果visible的newValue是false，直接调用onDestroy
+//     props.onDestroy()
+//   }
+// })
+function destroyComponent () {
+  props.onDestroy()
+}
+
+function updateHeight() {
+  height.value = messageRef.value!.getBoundingClientRect().height
+}
+
 defineExpose({
   // 名称相同，只写一个
   bottomOffset,
   visible
 })
 </script>
-
-<style scoped>
-.wow-message {
-  width: max-content;
-  position: fixed;
-  left: 50%;
-  top: 20px;
-  transform: translateX(-50%);
-  border: 1px solid #0000FF;
-}
-</style>

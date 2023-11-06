@@ -82,6 +82,10 @@ export const getLastBottomOffset = (id: string) => {
     // 找到了，说明是前面已经有生成了的组件
     // 获取前一个组件
     const prev = instances[idx - 1]
+    console.log(instances);
+    
+    console.log(prev.vm);
+    
     return prev.vm.exposed!.bottomOffset.value
   }
   return 0
