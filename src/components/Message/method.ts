@@ -1,12 +1,12 @@
 // h用来生成VNode
-import { render, h } from 'vue'
+import { render, h, shallowReactive } from 'vue'
 import type { CreateMessageProps, MessageContext } from './types'
 import MessageConstructor from './Message.vue'
 
 // 创建id，每次调用createMessage，自动加1，作为新的id
 let seed = 1
 // 该变量存储多个创建好的Message组件实例，初始为空数组
-const instances: MessageContext[] = []
+const instances: MessageContext[] = shallowReactive([])
 
 export const createMessage = (props: CreateMessageProps) => {
   // 创建id
@@ -25,6 +25,7 @@ export const createMessage = (props: CreateMessageProps) => {
   // 重新包装props，让它自动获取一些新的属性。newProps会被传入到Message.vue中
   const newProps = {
     ...props,
+    id,
     onDestroy: destroy
   }
   const vnode = h(MessageConstructor, newProps)
@@ -37,11 +38,15 @@ export const createMessage = (props: CreateMessageProps) => {
   // 所以我们要去掉null类型，用到了非空断言操作符，在后面加一个感叹号就行，这个操作符会告诉ts，这个变量不会是none或者undefined
   // 这是一个类型断言的快捷方式
   document.body.appendChild(container.firstElementChild!)
+  // 获取内部实例
+  const vm = vnode.component!
 
   // 创建这次新建的message组件的实例，然后把此实例push到instances变量里
   const instance = {
     id,
     vnode,
+    // 内部实例
+    vm,
     props: newProps
   }
   instances.push(instance)
@@ -53,4 +58,19 @@ export const createMessage = (props: CreateMessageProps) => {
 export const getLastInstance = () => {
     // 拿到数组的最后一项
     return instances.at(-1)
+}
+
+// 该函数是计算前一个组件的bottom offset
+export const getLastBottomOffset = (id: string) => {
+  // 我们要查找这个instance的id等于我们传入的id
+  const idx = instances.findIndex(instance => instance.id == id)
+  if (idx <= 0) {
+    return 0 // 说明没找到，是当前的instance是instances数组里的第一项，返回0
+  } else {
+    // 找到了，说明是前面已经有生成了的组件
+    // 获取前一个组件
+    const prev = instances[idx - 1]
+    return prev.vm.exposed!.bottomOffset.value
+  }
+  return 0
 }
