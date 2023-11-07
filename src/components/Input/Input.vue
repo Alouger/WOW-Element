@@ -9,6 +9,7 @@
       'is-append': $slots.append,
       'is-prefix': $slots.prefix,
       'is-suffix': $slots.suffix,
+      'is-focus': isFocus
     }"
   >
     <!-- type = input时 -->
@@ -28,10 +29,18 @@
           :disabled="disabled"
           v-model="innerValue"
           @input="handleInput"
+          @focus="handleFocus"
+          @blur="handleBlur"
         />
         <!-- suffix slot -->
-        <span v-if="$slots.suffix" class="wow-input__suffix">
+        <span v-if="$slots.suffix || showClear" class="wow-input__suffix">
           <slot name="suffix"/>
+          <Icon
+            icon="circle-xmark"
+            v-if="showClear"
+            class="wow-input__clear"
+            @click="clear"
+          />
         </span>
       </div>
       <!-- append slot -->
@@ -47,6 +56,8 @@
         :disabled="disabled"
         v-model="innerValue"
         @input="handleInput"
+        @focus="handleFocus"
+        @blur="handleBlur"
       />
     </template>
 
@@ -54,8 +65,9 @@
 </template>
 
 <script setup lang="ts">
-import { ref, watch } from 'vue'
+import { ref, watch, computed } from 'vue'
 import type { InputProps, InputEmits } from './types'
+import Icon from '../Icon/Icon.vue'
 
 defineOptions({
   name: 'WowInput'
@@ -63,11 +75,31 @@ defineOptions({
 const props = withDefaults(defineProps<InputProps>(), { type: 'text' })
 const emits = defineEmits<InputEmits>()
 const innerValue = ref(props.modelValue)
+// 控制是否是focus状态
+const isFocus = ref(false)
 
+// 两个感叹号!!可以把变量转换成布尔值
+// 该变量控制是否显示清空的Icon
+const showClear = computed(() => 
+  props.clearable &&
+  !props.disabled &&
+  !!innerValue.value &&
+  isFocus.value
+)
 const handleInput = () => {
   emits('update:modelValue', innerValue.value)
 }
-
+const handleFocus = () => {
+  isFocus.value = true
+}
+const handleBlur = () => {
+  isFocus.value = false
+}
+// 点击清空Icon后，清空内容
+const clear = () => {
+  innerValue.value = ''
+  emits('update:modelValue', '')
+}
 // 解决v-model的异步更新问题：当我们把props.modelValue用ref转化成一个本地值的时候，也就是innerValue
 // 就要注意当外部的props.modelValue更新的时候，我们内部的innerValue也要相应的变化
 watch(() => props.modelValue, (newValue) => {

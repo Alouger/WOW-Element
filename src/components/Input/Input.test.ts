@@ -73,4 +73,27 @@ describe('Input', () => {
     // 再来看看DOM元素上的值是否更新
     expect(input.element.value).toBe('prop update')
   })
+
+  it.only('支持点击清空字符串', async () => {
+    const wrapper = mount(Input, {
+        props: {
+          modelValue: 'test',
+          clearable: true,
+          type: 'text'
+        },
+        global: {
+          stubs: ['Icon']
+        }
+    })
+    // 非focu状态下不出现对应的Icon区域
+    expect(wrapper.find('.wow-input__clear').exists()).toBeFalsy()
+    const input = wrapper.get('input')
+    // 进入focus状态
+    await input.trigger('focus')
+    // 进入focus状态后，并且input的值是我们设置的初始值'test'，应该就会有Icon区域了，测试一下
+    expect(wrapper.find('.wow-input__clear').exists()).toBeTruthy()
+    // 点击值变为空并且消失
+    await wrapper.get('.wow-input__clear').trigger('click')
+    expect(input.element.value).toBe('')
+  })
 })
