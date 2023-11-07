@@ -26,6 +26,8 @@
           class="wow-input__inner"
           :type="type"
           :disabled="disabled"
+          v-model="innerValue"
+          @input="handleInput"
         />
         <!-- suffix slot -->
         <span v-if="$slots.suffix" class="wow-input__suffix">
@@ -43,6 +45,8 @@
       <textarea
         class="wow-textareaa__wrapper"
         :disabled="disabled"
+        v-model="innerValue"
+        @input="handleInput"
       />
     </template>
 
@@ -50,10 +54,23 @@
 </template>
 
 <script setup lang="ts">
-import type { InputProps } from './types'
+import { ref, watch } from 'vue'
+import type { InputProps, InputEmits } from './types'
 
 defineOptions({
   name: 'WowInput'
 })
-withDefaults(defineProps<InputProps>(), { type: 'text' })
+const props = withDefaults(defineProps<InputProps>(), { type: 'text' })
+const emits = defineEmits<InputEmits>()
+const innerValue = ref(props.modelValue)
+
+const handleInput = () => {
+  emits('update:modelValue', innerValue.value)
+}
+
+// 解决v-model的异步更新问题：当我们把props.modelValue用ref转化成一个本地值的时候，也就是innerValue
+// 就要注意当外部的props.modelValue更新的时候，我们内部的innerValue也要相应的变化
+watch(() => props.modelValue, (newValue) => {
+  innerValue.value = newValue
+})
 </script>
