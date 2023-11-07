@@ -25,7 +25,7 @@
         </span>
         <input
           class="wow-input__inner"
-          :type="type"
+          :type="showPassword ? (passwordVisible ? 'text' : 'password') : type"
           :disabled="disabled"
           v-model="innerValue"
           @input="handleInput"
@@ -33,13 +33,25 @@
           @blur="handleBlur"
         />
         <!-- suffix slot -->
-        <span v-if="$slots.suffix || showClear" class="wow-input__suffix">
+        <span v-if="$slots.suffix || showClear || showPasswordArea" class="wow-input__suffix">
           <slot name="suffix"/>
           <Icon
             icon="circle-xmark"
             v-if="showClear"
             class="wow-input__clear"
             @click="clear"
+          />
+          <Icon
+            icon="eye"
+            v-if="showPasswordArea && passwordVisible"
+            class="wow-input__password"
+            @click="togglePasswordVisible"
+          />
+          <Icon
+            icon="eye-slash"
+            v-if="showPasswordArea && !passwordVisible"
+            class="wow-input__password"
+            @click="togglePasswordVisible"
           />
         </span>
       </div>
@@ -77,6 +89,8 @@ const emits = defineEmits<InputEmits>()
 const innerValue = ref(props.modelValue)
 // 控制是否是focus状态
 const isFocus = ref(false)
+// 控制是否为密码可见或不可见
+const passwordVisible = ref(false)
 
 // 两个感叹号!!可以把变量转换成布尔值
 // 该变量控制是否显示清空的Icon
@@ -86,6 +100,14 @@ const showClear = computed(() =>
   !!innerValue.value &&
   isFocus.value
 )
+const showPasswordArea = computed(() => 
+  props.showPassword &&
+  !props.disabled &&
+  !!innerValue.value
+)
+const togglePasswordVisible = () => {
+  passwordVisible.value = !passwordVisible.value
+}
 const handleInput = () => {
   emits('update:modelValue', innerValue.value)
 }

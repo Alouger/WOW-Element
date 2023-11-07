@@ -96,4 +96,34 @@ describe('Input', () => {
     await wrapper.get('.wow-input__clear').trigger('click')
     expect(input.element.value).toBe('')
   })
+
+  it.only('支持切换密码显示', async () => {
+    const wrapper = mount(Input, {
+      props: {
+        modelValue: '',
+        showPassword: true,
+        type: 'text'
+      },
+      global: {
+        stubs: ['Icon']
+      }
+    })
+    // 不出现对应的ICON区域，因为当前值为空
+    expect(wrapper.find('.wow-input__password').exists()).toBeFalsy()
+    // await wrapper.setProps({ modelValue: 'password'});
+    // expect(wrapper.find('.wow-input__password').exists()).toBeTruthy()
+    const input = wrapper.get('input')
+    expect(input.element.type).toBe('password')
+    // 出现Icon区域，并且Icon为特点的图标
+    await input.setValue('123')
+    const eyeIcon = wrapper.find('.wow-input__password')
+    expect(eyeIcon.exists()).toBeTruthy()
+    expect(eyeIcon.attributes('icon')).toBe('eye-slash')
+    // 点击值变为切换input类型，并且图标的Icon会切换
+    await eyeIcon.trigger('click')
+    expect(input.element.type).toBe('text')
+    // expect(eyeIcon.attributes('icon')).toBe('eye')
+    // 不能再用eyeIcon这个变量了，因为它会缓存之前内容，在这里我们得重新用wrapper.find('.wow-input__password')获取
+    expect(wrapper.find('.wow-input__password').attributes('icon')).toBe('eye')
+  })
 })
