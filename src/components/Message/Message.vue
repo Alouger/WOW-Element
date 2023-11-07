@@ -86,9 +86,9 @@ function clearTimer() {
 onMounted(async () => {
   visible.value = true
   startTimer()
-  // await nextTick()  // 等DOM节点更新完毕
-  // // !是非空断言操作符   .getBoundingClientRect().height动态获取组件的高度
-  // height.value = messageRef.value!.getBoundingClientRect().height
+  await nextTick()  // 等DOM节点更新完毕
+  // !是非空断言操作符   .getBoundingClientRect().height动态获取组件的高度
+  height.value = messageRef.value!.getBoundingClientRect().height
 })
 // 键盘按下的回调, 使visible变为false，message隐藏销毁
 function keydown(e: Event) {
