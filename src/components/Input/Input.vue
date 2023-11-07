@@ -29,6 +29,7 @@
           :disabled="disabled"
           v-model="innerValue"
           @input="handleInput"
+          @change="handleChange"
           @focus="handleFocus"
           @blur="handleBlur"
         />
@@ -68,6 +69,7 @@
         :disabled="disabled"
         v-model="innerValue"
         @input="handleInput"
+        @change="handleChange"
         @focus="handleFocus"
         @blur="handleBlur"
       />
@@ -110,17 +112,26 @@ const togglePasswordVisible = () => {
 }
 const handleInput = () => {
   emits('update:modelValue', innerValue.value)
+  emits('input', innerValue.value)
 }
-const handleFocus = () => {
+const handleChange = () => {
+  emits('change', innerValue.value)
+}
+const handleFocus = (event: FocusEvent) => {
   isFocus.value = true
+  emits('focus', event)
 }
-const handleBlur = () => {
+const handleBlur = (event: FocusEvent) => {
   isFocus.value = false
+  emits('blur', event)
 }
 // 点击清空Icon后，清空内容
 const clear = () => {
   innerValue.value = ''
   emits('update:modelValue', '')
+  emits('clear')
+  emits('input', '')
+  emits('change', '')
 }
 // 解决v-model的异步更新问题：当我们把props.modelValue用ref转化成一个本地值的时候，也就是innerValue
 // 就要注意当外部的props.modelValue更新的时候，我们内部的innerValue也要相应的变化

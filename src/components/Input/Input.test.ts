@@ -44,7 +44,7 @@ describe('Input', () => {
     expect(wrapper2.find('textarea').exists()).toBeTruthy()
   })
 
-  it('支持v-model', async () => {
+  it.only('支持v-model', async () => {
     const wrapper = mount(Input, {
       props: {
         modelValue: 'test',
@@ -54,19 +54,36 @@ describe('Input', () => {
     // 测试初始值
     // wrapper.get('input') 得到input这个wrapper
     const input = wrapper.get('input')
-    console.log("input", input);
-    console.log("input.element", input.element);
-    console.log("input.element.value", input.element.value);
+    // console.log("input", input);
+    // console.log("input.element", input.element);
+    // console.log("input.element.value", input.element.value);
     // input.element 是得到input这个DOM节点
     // console.log("input.element.value", input.element.value);
     expect(input.element.value).toBe('test')
 
     // 测试更新值  把input的值更新为'update'
+    // 注意 setValue 是组合事件，会触发input以及change事件
     await input.setValue('update')
     // 先看wrapper上的modelValue是否更新了
     expect(wrapper.props('modelValue')).toBe('update')
     // 再来看看DOM元素上的值是否更新
     expect(input.element.value).toBe('update')
+
+    // 把触发的事件打印出来，应该既有input也有change事件
+    console.log('the events: ', wrapper.emitted());
+    // 打印结果：
+    // the events:  {
+    //   'update:modelValue': [ [ 'update' ] ],
+    //   input: [ [ 'update' ], [ [Event] ] ],
+    //   change: [ [ 'update' ], [ [Event] ] ]
+    // }
+    expect(wrapper.emitted()).toHaveProperty('input')
+    expect(wrapper.emitted()).toHaveProperty('change')
+    // 获取事件项
+    const inputEvent = wrapper.emitted('input')
+    const changeEvent = wrapper.emitted('change')
+    expect(inputEvent![0]).toEqual(['update'])
+    expect(changeEvent![0]).toEqual(['update'])
 
     // 还有种情况是v-model的异步更新，也就是外侧把这个props进行更新
     await wrapper.setProps({modelValue: 'prop update'})
@@ -90,14 +107,30 @@ describe('Input', () => {
     const input = wrapper.get('input')
     // 进入focus状态
     await input.trigger('focus')
+    // 应该会触发focus事件
+    expect(wrapper.emitted()).toHaveProperty('focus')
     // 进入focus状态后，并且input的值是我们设置的初始值'test'，应该就会有Icon区域了，测试一下
     expect(wrapper.find('.wow-input__clear').exists()).toBeTruthy()
     // 点击值变为空并且消失
     await wrapper.get('.wow-input__clear').trigger('click')
     expect(input.element.value).toBe('')
+    // 点击值变为空并且消失，特别注意这里不仅仅会触发clear事件，对应的input以及change事件都会被触发
+    expect(wrapper.emitted()).toHaveProperty('clear')
+    expect(wrapper.emitted()).toHaveProperty('input')
+    expect(wrapper.emitted()).toHaveProperty('change')
+    // 获取事件项
+    const inputEvent = wrapper.emitted('input')
+    const changeEvent = wrapper.emitted('change')
+    // 测试事件后的内容值是否正确
+    expect(inputEvent![0]).toEqual([''])
+    expect(changeEvent![0]).toEqual([''])
+
+    // 触发blur事件
+    await input.trigger('blur')
+    expect(wrapper.emitted()).toHaveProperty('blur')
   })
 
-  it.only('支持切换密码显示', async () => {
+  it('支持切换密码显示', async () => {
     const wrapper = mount(Input, {
       props: {
         modelValue: '',
