@@ -5,6 +5,12 @@ export interface InputProps {
   disabled?: boolean;
   clearable?: boolean;
   showPassword?: boolean;
+  // —————— 增加其余原生的Input属性 ——————
+  placeHolder?: string;
+  readonly?: boolean;
+  autocomplete?: string;
+  autofocus?: boolean;
+  form?: string;
 }
 
 export interface InputEmits {

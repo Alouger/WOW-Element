@@ -25,13 +25,20 @@
         </span>
         <input
           class="wow-input__inner"
+          v-bind="attrs"
           :type="showPassword ? (passwordVisible ? 'text' : 'password') : type"
           :disabled="disabled"
+          :readonly="readonly"
+          :autocomplete="autocomplete"
+          :placeholder="placeholder"
+          :autofocus="autofocus"
+          :form="form"
           v-model="innerValue"
           @input="handleInput"
           @change="handleChange"
           @focus="handleFocus"
           @blur="handleBlur"
+          ref="inputRef"
         />
         <!-- suffix slot -->
         <span v-if="$slots.suffix || showClear || showPasswordArea" class="wow-input__suffix">
@@ -66,12 +73,19 @@
     <template v-else>
       <textarea
         class="wow-textareaa__wrapper"
+        v-bind="attrs"
         :disabled="disabled"
+        :readonly="readonly"
+        :autocomplete="autocomplete"
+        :placeholder="placeholder"
+        :autofocus="autofocus"
+        :form="form"
         v-model="innerValue"
         @input="handleInput"
         @change="handleChange"
         @focus="handleFocus"
         @blur="handleBlur"
+        ref="inputRef"
       />
     </template>
 
@@ -79,20 +93,25 @@
 </template>
 
 <script setup lang="ts">
-import { ref, watch, computed } from 'vue'
+import { ref, watch, computed, useAttrs } from 'vue'
+import type { Ref } from 'vue'
 import type { InputProps, InputEmits } from './types'
 import Icon from '../Icon/Icon.vue'
 
 defineOptions({
-  name: 'WowInput'
+  name: 'WowInput',
+  // 不继承属性
+  inheriteAttrs: false
 })
-const props = withDefaults(defineProps<InputProps>(), { type: 'text' })
+const props = withDefaults(defineProps<InputProps>(), { type: 'text', autocomplete: 'off' })
 const emits = defineEmits<InputEmits>()
+const attrs = useAttrs()
 const innerValue = ref(props.modelValue)
 // 控制是否是focus状态
 const isFocus = ref(false)
 // 控制是否为密码可见或不可见
 const passwordVisible = ref(false)
+const inputRef = ref() as Ref<HTMLInputElement>
 
 // 两个感叹号!!可以把变量转换成布尔值
 // 该变量控制是否显示清空的Icon
@@ -137,5 +156,8 @@ const clear = () => {
 // 就要注意当外部的props.modelValue更新的时候，我们内部的innerValue也要相应的变化
 watch(() => props.modelValue, (newValue) => {
   innerValue.value = newValue
+})
+defineExpose({
+  ref: inputRef
 })
 </script>
