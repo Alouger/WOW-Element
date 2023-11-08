@@ -11,7 +11,21 @@
   font-size: 14px;
   line-height:20px;
   height:32px;
-  /* border: 1px solid #efefef; */
+  
+  .wow-switch__input {
+    position: absolute;
+    width: 0;
+    height: 0;
+    opacity: 0;
+    margin: 0;
+    &:focus-visible {
+      /* 兄弟选择器 */
+      & ~ .wow-switch__core {
+        outline: 2px solid var(--wow-switch-on-color);
+        outline-offset: 1px;
+      }
+    }
+  }
   &.is-checked {
     .wow-switch__core {
       border-color: var(--wow-switch-on-border-color);
