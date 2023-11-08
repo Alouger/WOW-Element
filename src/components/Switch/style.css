@@ -1,0 +1,57 @@
+.wow-switch {
+  --wow-switch-on-color: var(--wow-color-primary);
+  --wow-switch-off-color: var(--wow-border-color);
+  --wow-switch-on-border-color: var(--wow-color-primary);
+  --wow-switch-off-border-color: var(--wow-border-color);
+  }
+
+.wow-switch {
+  display: inline-flex;
+  align-items: center;
+  font-size: 14px;
+  line-height:20px;
+  height:32px;
+  /* border: 1px solid #efefef; */
+  &.is-checked {
+    .wow-switch__core {
+      border-color: var(--wow-switch-on-border-color);
+      background-color: var(--wow-switch-on-color);
+      .wow-switch__core-action {
+        /* 因为里面这个圆形宽16px，我们又需要圆形离外边框能有1px，所以是17px */
+        left: calc(100% - 17px);
+      }
+    }
+  }
+}
+
+.wow-switch__core {
+  /* display和align-items做到垂直居中 */
+  display: inline-flex;
+  align-items: center;
+  /* 因为switch里面的原型要设置为absolute */
+  position: relative;
+  height: 20px;
+  min-width: 40px;
+  /* 默认switch是关闭状态，用--wow-switch-off-border-color */
+  border: 1px solid var(--wow-switch-off-border-color);
+  /* 去掉outline */
+  outline: none;
+  /* 弧形 */
+  border-radius: 10px;
+  /* 确保高度和宽度就是我们上面设置的height和min-width */
+  box-sizing: border-box;
+  background: var(--wow-switch-off-color);
+  /* 点击时的动画效果 */
+  transition: border-color var(--wow-transition-duration), background-color var(--wow-transition-duration);
+  cursor: pointer;
+  .wow-switch__core-action {
+    position: absolute;
+    /* 设为100%，即变成圆形 */
+    border-radius: var(--wow-border-radius-circle);
+    left: 1px;
+    width: 16px;
+    height: 16px;
+    background-color: var(--wow-color-white);
+    transition: all var(----wow-transition-duration);
+  }
+}
