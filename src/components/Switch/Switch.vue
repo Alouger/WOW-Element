@@ -19,6 +19,11 @@
     />
 
     <div class="wow-switch__core">
+      <div class="wow-switch__core-inner">
+        <span v-if="activeText || inactiveText" class="wow-switch__core-inner-text">
+          {{ checked ? activeText : inactiveText}}
+        </span>
+      </div>
       <div class="wow-switch__core-action"></div>
     </div>
   </div>
@@ -33,19 +38,25 @@ defineOptions({
   inheritAttrs: false
 })
 
-const props = defineProps<SwitchProps>()
+const props = withDefaults(defineProps<SwitchProps>(), {
+  activeValue: true,
+  inactiveValue: false,
+})
 const emits = defineEmits<SwitchEmits>()
 // 有一个状态，代表整个组件是否被选中，应该用一个props初始值创建一个响应式对象来代表内部变化的值
 const innerValue = ref(props.modelValue)
 const input = ref<HTMLInputElement>() 
 
 // 代表整个组件是否被选中，布尔值类型
-const checked = computed(() => innerValue.value)
+const checked = computed(() => innerValue.value === props.activeValue)
 const switchValue = () => {
   if (props.disabled) return
-  innerValue.value = !checked.value
-  emits('update:modelValue', innerValue.value)
-  emits('change', innerValue.value)
+  // 当前是被选中时，checked.value = true，要给反值inactiveValue
+  // 没被选中，checked.value = false，给activeValue
+  const newValue = checked.value ? props.inactiveValue : props.activeValue
+  innerValue.value = newValue
+  emits('update:modelValue', newValue)
+  emits('change', newValue)
 }
 onMounted(() => {
   // input.value有可能是undefined，要用非空断言操作符

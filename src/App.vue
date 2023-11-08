@@ -20,7 +20,7 @@ import Switch from './components/Switch/Switch.vue'
 
 // 我们预设name为a的collapseItem是打开的
 const openedValue = ref(['a']);
-const test = ref(false)
+const test = ref('right')
 // 通过ref拿到button的dom节点，注意模板中的ref属性值要和我们script中的变量名一样
 // 一开始buttonRef会是null类型，所以要用联合类型加上null
 const buttonRef = ref<ButtonInstance | null>(null)
@@ -91,7 +91,8 @@ const testClick = () => {
 
   <Icon icon="arrow-up" :size="size" type="danger" color="#0e7a0d" />
   <main>
-    <Switch v-model="test"/>
+    <Switch v-model="test" activeValue="right" inactiveValue="wrong" activeText="ON" inactiveText="OFF"/>
+    <h4>model-value: {{test}}</h4>
     <Button ref="buttonRef" @click="open">Test Button</Button>
     <Button plain @click="close">Plain Button</Button>
     <Button round>Round Button</Button>
