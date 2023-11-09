@@ -17,10 +17,12 @@ import type { MenuOption } from './components/Dropdown/types'
 import Message from './components/Message/Message.vue'
 import { createMessage } from './components/Message/method'
 import Switch from './components/Switch/Switch.vue'
+import Select from './components/Select/Select.vue'
 
 // 我们预设name为a的collapseItem是打开的
 const openedValue = ref(['a']);
 const test = ref('right')
+const test1 = ref('')
 // 通过ref拿到button的dom节点，注意模板中的ref属性值要和我们script中的变量名一样
 // 一开始buttonRef会是null类型，所以要用联合类型加上null
 const buttonRef = ref<ButtonInstance | null>(null)
@@ -36,6 +38,12 @@ const dropdownOptions: MenuOption[] =  [
   {key: 2, label: 'item2', disabled: true},
   {key: 3, label: 'item3', divided: true},
   {key: 4, label: 'item4'},
+]
+const options2 = [
+  { label: 'hello', value: 1 },
+  { label: 'xyz', value: 2 },
+  { label: 'testing', value: 3 },
+  { label: 'check', value: 4 }
 ]
 // 创建两个由Tooltip暴露的方法
 const open = () => {
@@ -65,7 +73,8 @@ const testClick = () => {
 </script>
 
 <template>
-
+  <Select v-model="test1" placeholder="基础选择器，请选择" :options="options2" />
+  <span>{{test1}}</span>
   <header>
   <Dropdown placement="bottom" :trigger="trigger" :menu-options="dropdownOptions">
     <img alt="Vue logo" class="logo" src="./assets/logo.svg" width="125" height="125"/>
