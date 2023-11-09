@@ -3,6 +3,8 @@
     class="wow-select"
     :class="{'is-disabled': disabled}"
     @click="toggleDropdown"
+    @mouseenter="states.mouseHover = true"
+    @mouseleave="states.mouseHover = false"
   >
     <!-- 为了完成自定义，我们把Tooltip设为手动模式 manual -->
     <Tooltip
@@ -19,8 +21,21 @@
         ref="inputRef"
         readonly
       >
+        <!-- @mousedown.prevent="NOOP" 阻止blur的发生 -->
         <template #suffix>
-          <Icon icon="angle-down" class="header-angle" :class="{ 'is-active': isDropdownShow }" />
+          <Icon
+            icon="circle-xmark"
+            v-if="showClearIcon"
+            class="wow-input__clear"
+            @mousedown.prevent="NOOP"
+            @click.stop="onClear"
+          />
+          <Icon
+            v-else
+            icon="angle-down"
+            class="header-angle"
+            :class="{ 'is-active': isDropdownShow }" 
+          />
         </template>
       </Input>
       <template #content>
@@ -50,7 +65,7 @@
 import type { SelectProps, SelectEmits, SelectOption, SelectStates } from './types'
 import Tooltip from '../Tooltip/Tooltip.vue'
 import Input from '../Input/Input.vue'
-import { ref, reactive } from 'vue'
+import { ref, reactive, computed } from 'vue'
 import type { Ref } from 'vue'
 import type { TooltipInstance } from '../Tooltip/types'
 import type { InputInstance } from '../Input/types'
@@ -114,8 +129,30 @@ const states = reactive<SelectStates>({
   // 和innerValue一样
   inputValue: initialOption ? initialOption.label : '',
   // 把initialOption作为selectOption的初始值
-  selectedOption: initialOption
+  selectedOption: initialOption,
+  mouseHover: false
 })
+
+const showClearIcon = computed(() => {
+  // 计算为true的要求：
+  // 1. hover 上去
+  // 2. props.clearable为true
+  // 3. 必须要有选择过选项
+  // 4. Input的值不能为空
+  return props.clearable
+    && states.mouseHover
+    && states.selectedOption
+    && states.inputValue.trim() != ''
+})
+// 清空的逻辑函数
+const onClear = () => {
+  states.selectedOption = null
+  states.inputValue = ''
+  emits('clear')
+  emits('change')
+  emits('update:modelValue', '')
+}
+const NOOP = () => {}
 
 // 控制打开或关闭dropdown
 const controlDropdown = (show: boolean) => {
