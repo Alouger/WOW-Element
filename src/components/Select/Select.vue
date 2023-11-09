@@ -8,12 +8,14 @@
     <Tooltip
       placement="bottom-start"
       ref="tooltipRef"
+      :popperOptions="popperOptions"
       manual
     >
       <Input
         v-model="states.inputValue"
         :disabled="disabled"
         :placeholder="placeholder"
+        readonly
       />
       <template #content>
         <ul class="wow-select__menu">
@@ -62,6 +64,39 @@ const emits = defineEmits<SelectEmits>()
 const tooltipRef = ref() as Ref<TooltipInstance>
 // 创建代表dropdown状态，是否被打开的变量
 const isDropdownShow = ref(false)
+const popperOptions: any = {
+    modifiers: [
+      {
+        name: 'offset',
+        options: {
+          offset: [0, 9]
+        },
+      },
+      {
+        // 注释的部分是原来的代码，实现不了弹窗和input输入框相同的长度，重新从popper.js文档找到最新的代码放过来使用就可以了
+        // name: 'sameWidth',
+        // enable: true,
+        // fn: ({ state }: {state: any }) => {
+        //     state.styles.popper.width = `${state.rects.reference.width}px`
+        // },
+        // phase: "beforeWrite",
+        // requires: ["computeStyles"]
+        name: "sameWidth",
+        enabled: true,
+        phase: "beforeWrite",
+        requires: ["computeStyles"],
+        fn: ({ state }) => {
+            state.styles.popper.width = `${state.rects.reference.width}px`;
+        },
+        effect: ({ state }) => {
+            state.elements.popper.style.width = `${
+            state.elements.reference.offsetWidth
+            }px`;
+        }
+      }
+    ],
+}
+
 // 我们希望刚开始的时候能对option进行一个查找
 const initialOption = findOption(props.modelValue)
 // 因为有了states里的inputValue，所以我们就不需要innerValue了

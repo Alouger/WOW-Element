@@ -1,0 +1,77 @@
+.wow-select {
+    --wow-select-item-hover-bg-color: var(--wow-fill-color-light);
+    --wow-select-item-font-size: var(--wow-font-size-base);
+    --wow-select-item-font-color: var(--wow-text-color-regular);
+    --wow-select-item-selected-font-color: var(--wow-color-primary);
+    --wow-select-item-disabled-font-color: var(--wow-text-color-placeholder);
+    --wow-select-input-focus-border-color: var(--wow-color-primary);
+  }
+  
+  .wow-select {
+    display: inline-block;
+    vertical-align: middle;
+    line-height: 32px;
+    .wow-tooltip .wow-tooltip__popper {
+      padding: 0;
+    }
+    .wow-input.is-focus .wow-input__wrapper {
+      box-shadow: 0 0 0 1px var(--wow-select-input-focus-border-color) inset!important
+    }
+    .wow-input {
+      .header-angle {
+        transition: transform var(--wow-transition-duration);
+        &.is-active {
+          transform: rotate(180deg);
+        }
+      }
+    }
+  
+    .wow-input__inner {
+      cursor: pointer;
+    }
+    .wow-select__nodata, .wow-select__loading {
+      padding: 10px 0;
+      margin: 0;
+      text-align: center;
+      color: var(--wow-text-color-secondary);
+      font-size: var(--wow-select-font-size);
+    }
+    .wow-select__menu {
+      list-style: none;
+      margin: 6px 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+    .wow-select__menu-item { 
+      margin: 0;
+      font-size: var(--wow-select-item-font-size);
+      padding: 0 32px 0 20px;
+      position: relative;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      color: var(--wow-select-item-font-color);
+      height: 34px;
+      line-height: 34px;
+      box-sizing: border-box;
+      cursor: pointer;
+      &:hover {
+        background-color: var(--wow-select-item-hover-bg-color);
+      }
+      &.is-selected {
+        color: var(--wow-select-item-selected-font-color);
+        font-weight: 700;    
+      }
+      &.is-highlighted {
+        background-color: var(--wow-select-item-hover-bg-color);
+      }
+      &.is-disabled {
+        color: var(--wow-select-item-disabled-font-color);
+        cursor: not-allowed;
+        &:hover {
+          background-color: transparent;
+        }
+      }
+  
+    }
+  }

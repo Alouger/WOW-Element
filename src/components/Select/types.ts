@@ -18,7 +18,7 @@ export interface SelectStates {
   // input的值
   inputValue: string;
   // 代表我们之前选择的是哪个选项，最初页面一打开可能是null
-  selectOption: null | SelectOption;
+  selectedOption: null | SelectOption;
 }
 
 export interface SelectEmits {
