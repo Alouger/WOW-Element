@@ -14,6 +14,13 @@ export interface SelectProps {
   disabled: boolean;
 }
 
+export interface SelectStates {
+  // input的值
+  inputValue: string;
+  // 代表我们之前选择的是哪个选项，最初页面一打开可能是null
+  selectOption: null | SelectOption;
+}
+
 export interface SelectEmits {
   (e: 'change', value: string): void;
   (e: 'update:modelValue', value: string): void;
