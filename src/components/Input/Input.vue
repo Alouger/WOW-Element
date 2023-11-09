@@ -158,6 +158,6 @@ watch(() => props.modelValue, (newValue) => {
   innerValue.value = newValue
 })
 defineExpose({
-  ref: inputRef
+  refInstance: inputRef
 })
 </script>

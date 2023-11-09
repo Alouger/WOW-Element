@@ -17,6 +17,7 @@ export interface TooltipProps {
 // 对应的事件
 export interface TooltipEmits {
   (e: 'visible-change', value: boolean): void;
+  (e: 'click-outside', value: boolean): void;
 }
 
 // 要暴露的两个方法，作为给用户进行手动执行的

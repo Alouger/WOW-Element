@@ -9,14 +9,20 @@
       placement="bottom-start"
       ref="tooltipRef"
       :popperOptions="popperOptions"
+      @click-outside="controlDropdown(false)"
       manual
     >
       <Input
         v-model="states.inputValue"
         :disabled="disabled"
         :placeholder="placeholder"
+        ref="inputRef"
         readonly
-      />
+      >
+        <template #suffix>
+          <Icon icon="angle-down" class="header-angle" :class="{ 'is-active': isDropdownShow }" />
+        </template>
+      </Input>
       <template #content>
         <ul class="wow-select__menu">
           <template v-for="(item, index) in options" :key="index">
@@ -47,6 +53,8 @@ import Input from '../Input/Input.vue'
 import { ref, reactive } from 'vue'
 import type { Ref } from 'vue'
 import type { TooltipInstance } from '../Tooltip/types'
+import type { InputInstance } from '../Input/types'
+import Icon from '../Icon/Icon.vue'
 
 defineOptions({
   name: 'WowSelect'
@@ -96,6 +104,7 @@ const popperOptions: any = {
       }
     ],
 }
+const inputRef = ref() as Ref<InputInstance>
 
 // 我们希望刚开始的时候能对option进行一个查找
 const initialOption = findOption(props.modelValue)
@@ -138,5 +147,8 @@ const itemSelect = (e: SelectOption) => {
   emits('update:modelValue', e.value)
   // 点击行为后，我们要把dropdown关闭掉
   controlDropdown(false)
+  console.log("inputRef.value.", inputRef.value);
+  console.log("inputRef.value.refInstance", inputRef.value.refInstance);
+  inputRef.value.refInstance.focus()
 }
 </script>

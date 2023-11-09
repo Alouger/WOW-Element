@@ -126,6 +126,9 @@ useClickOutside(popperContainerNode, () => {
   if (props.trigger == 'click' && isOpen.value && !props.manual) {
     closeFinal()
   }
+  if (isOpen.value) {
+    emits('click-outside', true)
+  }
 })
 // 如果是手动模式下，应该是没有添加任何的events，也就是我们的hover和click应该都不会运作
 if (!props.manual) {
