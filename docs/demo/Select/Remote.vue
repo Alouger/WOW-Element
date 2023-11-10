@@ -71,6 +71,16 @@ const remoteFilter = (query) => {
     }
   })
 }
+
+const handleFetch = (query) => {
+  // 如果query是空的情况，这也是最开始的情况，这样的话会直接返回一个空的Promise
+  if (!query) return Promise.resolve([])
+  return fetch(`https://api.github.com/search/repositories?q=${query}`)
+  .then(res => res.json())
+  .then(({items}) => {
+    return items.slice(0, 10).map(item => ({ label: item.name, value: item.node_id}))
+  })
+}
 </script>
 <template>
   <Select 
@@ -78,6 +88,6 @@ const remoteFilter = (query) => {
     placeholder="搜索远程结果"
     filterable
     remote
-    :remote-method="remoteFilter"
+    :remote-method="handleFetch"
   />
 </template>

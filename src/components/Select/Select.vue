@@ -20,7 +20,7 @@
         :placeholder="filteredPlaceholder"
         ref="inputRef"
         :readonly="!filterable || !isDropdownShow"
-        @input="onFilter"
+        @input="debounceOnFilter"
       >
         <!-- @mousedown.prevent="NOOP" 阻止blur的发生 -->
         <template #suffix>
@@ -78,7 +78,7 @@ import type { TooltipInstance } from '../Tooltip/types'
 import type { InputInstance } from '../Input/types'
 import Icon from '../Icon/Icon.vue'
 import RenderVnode from '../Common/RenderVnode'
-import { isFunction } from 'lodash-es'
+import { isFunction, debounce } from 'lodash-es'
 
 defineOptions({
   name: 'WowSelect'
@@ -94,6 +94,7 @@ const findOption = (value: string) => {
 const props = withDefaults(defineProps<SelectProps>(), {
   options: () => []
 })
+const timeout = computed(() => props.remote ? 300 : 0)
 const emits = defineEmits<SelectEmits>()
 const tooltipRef = ref() as Ref<TooltipInstance>
 // 创建代表dropdown状态，是否被打开的变量
@@ -187,6 +188,9 @@ const generateFilterOptions = async (searchValue: string) => {
 const onFilter = () => {
   generateFilterOptions(states.inputValue)
 }
+const debounceOnFilter = debounce(() => {
+  onFilter()
+}, timeout.value)
 
 const showClearIcon = computed(() => {
   // 计算为true的要求：
