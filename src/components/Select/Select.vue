@@ -40,7 +40,11 @@
         </template>
       </Input>
       <template #content>
-        <ul class="wow-select__menu">
+        <!-- 展示loading时的图标 -->
+        <div class="wow-select__loading" v-if="states.loading"><Icon icon="spinner" spin /></div>
+        <!-- 展示没选项数据时的状态 -->
+        <div class="wow-select__nodata" v-else-if="filterable && filteredOptions.length == 0">no matching data</div>
+        <ul class="wow-select__menu" v-else>
           <template v-for="(item, index) in filteredOptions" :key="index">
             <li
               class="wow-select__menu-item"
@@ -87,7 +91,9 @@ const findOption = (value: string) => {
   return option ? option : null
 }
 
-const props = defineProps<SelectProps>()
+const props = withDefaults(defineProps<SelectProps>(), {
+  options: () => []
+})
 const emits = defineEmits<SelectEmits>()
 const tooltipRef = ref() as Ref<TooltipInstance>
 // 创建代表dropdown状态，是否被打开的变量
@@ -135,7 +141,8 @@ const states = reactive<SelectStates>({
   inputValue: initialOption ? initialOption.label : '',
   // 把initialOption作为selectOption的初始值
   selectedOption: initialOption,
-  mouseHover: false
+  mouseHover: false,
+  loading: false,
 })
 // 筛选功能：本地存储一个响应式变量，筛选后的选项
 const filteredOptions = ref(props.options)
@@ -144,12 +151,33 @@ watch(() => props.options, (newOptions) => {
   filteredOptions.value = newOptions
 })
 // 筛选功能：该函数负责生成一系列筛选后新的选项
-const generateFilterOptions = (searchValue: string) => {
+// 因为会有异步操作，所以加上async
+const generateFilterOptions = async (searchValue: string) => {
+  console.log("props", props);
+  console.log("props.remote", props.remote);
+  console.log("props.remoteMethod", props.remoteMethod);
+  console.log("isFunction(props.remoteMethod)", isFunction(props.remoteMethod));
+  
   if (!props.filterable) return
   // 自定义filter的处理方式 - 如果有自定义就用自定义，没有就用默认的数组上的filter
   // 使用lodash-es上的一个方法，可以判断我们传入的值是不是一个函数
   if (props.filterMethod && isFunction(props.filterMethod)) {
     filteredOptions.value = props.filterMethod(searchValue)
+  } else if (props.remote && props.remoteMethod && isFunction(props.remoteMethod)) {
+    // 远程搜索功能
+    states.loading = true
+    console.log("generateFilterOptions");
+    
+    try {
+      filteredOptions.value = await props.remoteMethod(searchValue)
+    } catch (e) {
+      console.error(e);
+      // 如果出现报错，进行清空
+      filteredOptions.value = []
+    } finally {
+      // 不管远程搜索成功还是失败，结束了我们都要把loading状态设为false
+      states.loading = false
+    }
   } else {
     // 用户没有传入自定义filter处理函数的话，就用默认的数组上的filter
     filteredOptions.value = props.options.filter(option => option.label.includes(searchValue))

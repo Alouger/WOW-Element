@@ -29,7 +29,7 @@
           :type="showPassword ? (passwordVisible ? 'text' : 'password') : type"
           :disabled="disabled"
           :readonly="readonly"
-          :autocomplete="attrs.autocomplete"
+          :autocomplete="autocomplete"
           :placeholder="placeholder"
           :autofocus="autofocus"
           :form="form"
