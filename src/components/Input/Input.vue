@@ -41,13 +41,14 @@
           ref="inputRef"
         />
         <!-- suffix slot -->
-        <span v-if="$slots.suffix || showClear || showPasswordArea" class="wow-input__suffix">
+        <span v-if="$slots.suffix || showClear || showPasswordArea" class="wow-input__suffix" @click="keepFocus">
           <slot name="suffix"/>
           <Icon
             icon="circle-xmark"
             v-if="showClear"
             class="wow-input__clear"
             @click="clear"
+            @mousedown.prevent="NOOP"
           />
           <Icon
             icon="eye"
@@ -93,7 +94,7 @@
 </template>
 
 <script setup lang="ts">
-import { ref, watch, computed, useAttrs } from 'vue'
+import { ref, watch, computed, useAttrs, nextTick } from 'vue'
 import type { Ref } from 'vue'
 import type { InputProps, InputEmits } from './types'
 import Icon from '../Icon/Icon.vue'
@@ -129,6 +130,11 @@ const showPasswordArea = computed(() =>
 const togglePasswordVisible = () => {
   passwordVisible.value = !passwordVisible.value
 }
+const NOOP = () => {}
+const keepFocus = async () => {
+  await nextTick()
+  inputRef.value.focus()
+}
 const handleInput = () => {
   emits('update:modelValue', innerValue.value)
   emits('input', innerValue.value)
@@ -141,11 +147,13 @@ const handleFocus = (event: FocusEvent) => {
   emits('focus', event)
 }
 const handleBlur = (event: FocusEvent) => {
+  console.log('blur triggered')
   isFocus.value = false
   emits('blur', event)
 }
 // 点击清空Icon后，清空内容
 const clear = () => {
+  console.log('clear triggered')
   innerValue.value = ''
   emits('update:modelValue', '')
   emits('clear')

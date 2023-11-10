@@ -21,6 +21,7 @@
         ref="inputRef"
         :readonly="!filterable || !isDropdownShow"
         @input="debounceOnFilter"
+        @keydown.stop="handleKeydown"
       >
         <!-- @mousedown.prevent="NOOP" 阻止blur的发生 -->
         <template #suffix>
@@ -50,7 +51,8 @@
               class="wow-select__menu-item"
               :class="{
                 'is-disabled': item.disabled,
-                'is-selected': states.selectedOption?.value == item.value
+                'is-selected': states.selectedOption?.value == item.value,
+                'is-highlighted': states.highlightIndex == index
                 }"
               :id="`select-item-${item.value}`"
               @click.stop="itemSelect(item)"
@@ -144,6 +146,7 @@ const states = reactive<SelectStates>({
   selectedOption: initialOption,
   mouseHover: false,
   loading: false,
+  highlightIndex: -1,
 })
 // 筛选功能：本地存储一个响应式变量，筛选后的选项
 const filteredOptions = ref(props.options)
@@ -183,6 +186,7 @@ const generateFilterOptions = async (searchValue: string) => {
     // 用户没有传入自定义filter处理函数的话，就用默认的数组上的filter
     filteredOptions.value = props.options.filter(option => option.label.includes(searchValue))
   }
+  states.highlightIndex = -1
 }
 // 筛选功能：用于绑定到Input组件上的回调
 const onFilter = () => {
@@ -191,6 +195,53 @@ const onFilter = () => {
 const debounceOnFilter = debounce(() => {
   onFilter()
 }, timeout.value)
+
+const handleKeydown = (e: KeyboardEvent) => {
+  switch (e.key) {
+    case 'Enter':
+      if (!isDropdownShow.value) {
+        controlDropdown(true)
+      } else {
+        if (states.highlightIndex > -1 && filteredOptions.value[states.highlightIndex]) {
+          itemSelect(filteredOptions.value[states.highlightIndex])
+        } else {
+          controlDropdown(false)
+        }
+      }
+      break
+    case 'Escape':
+      if (isDropdownShow.value) {
+        controlDropdown(false)
+      }
+      break
+    case 'ArrowUp':
+      e.preventDefault()
+      // states.highlightIndex = -1
+      if (filteredOptions.value.length > 0) {
+        if (states.highlightIndex === -1 || states.highlightIndex === 0) {
+          states.highlightIndex = filteredOptions.value.length - 1
+        } else {
+          // move up
+          states.highlightIndex--
+        }
+      }
+      break
+    case 'ArrowDown':
+      e.preventDefault()
+      // states.highlightIndex = -1
+      if (filteredOptions.value.length > 0) {
+        if (states.highlightIndex === -1 || states.highlightIndex === (filteredOptions.value.length - 1)) {
+          states.highlightIndex = 0
+        } else {
+          // move up
+          states.highlightIndex++
+        }
+      }
+      break
+    default:
+      break;
+  }
+}
 
 const showClearIcon = computed(() => {
   // 计算为true的要求：
@@ -238,6 +289,7 @@ const controlDropdown = (show: boolean) => {
     if (props.filterable) {
       states.inputValue = states.selectedOption ? states.selectedOption.label : ''
     }
+    states.highlightIndex = -1
   }
   isDropdownShow.value = show
   emits('visible-change', show)
