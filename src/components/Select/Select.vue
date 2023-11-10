@@ -17,9 +17,9 @@
       <Input
         v-model="states.inputValue"
         :disabled="disabled"
-        :placeholder="placeholder"
+        :placeholder="filteredPlaceholder"
         ref="inputRef"
-        :readonly="!filterable"
+        :readonly="!filterable || !isDropdownShow"
         @input="onFilter"
       >
         <!-- @mousedown.prevent="NOOP" 阻止blur的发生 -->
@@ -181,13 +181,31 @@ const onClear = () => {
 }
 const NOOP = () => {}
 
+// 筛选功能：再次选择改善placeholder的显示，显示当前选中的值
+const filteredPlaceholder = computed(() => {
+  return (props.filterable && states.selectedOption && isDropdownShow.value) ? states.selectedOption.label : props.placeholder
+})
+
 // 控制打开或关闭dropdown
 const controlDropdown = (show: boolean) => {
   // 使用Tooltip暴露的函数
   if (show) {
+    // 筛选功能：再次选择需要清空Input
+    // 条件是处在filter模式下，并且之前已经有选择过选项了
+    if (props.filterable && states.selectedOption) {
+      states.inputValue = ''
+    }
+    // 筛选功能：进行一次默认选项的生成
+    if (props.filterable) {
+      generateFilterOptions(states.inputValue)
+    }
     tooltipRef.value.show()
   } else {
     tooltipRef.value.hide()
+    // 筛选功能：blur的时候将之前选择的选项的值回灌到input中显示
+    if (props.filterable) {
+      states.inputValue = states.selectedOption ? states.selectedOption.label : ''
+    }
   }
   isDropdownShow.value = show
   emits('visible-change', show)

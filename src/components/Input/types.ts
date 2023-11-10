@@ -6,7 +6,7 @@ export interface InputProps {
   clearable?: boolean;
   showPassword?: boolean;
   // —————— 增加其余原生的Input属性 ——————
-  placeHolder?: string;
+  placeholder?: string;
   readonly?: boolean;
   autocomplete?: string;
   autofocus?: boolean;

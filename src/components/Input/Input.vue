@@ -24,12 +24,12 @@
           <slot name="prefix"/>
         </span>
         <input
-          class="wow-input__inner"
+          class="wow-input__inner"  
           v-bind="attrs"
           :type="showPassword ? (passwordVisible ? 'text' : 'password') : type"
           :disabled="disabled"
           :readonly="readonly"
-          :autocomplete="autocomplete"
+          :autocomplete="attrs.autocomplete"
           :placeholder="placeholder"
           :autofocus="autofocus"
           :form="form"
@@ -77,7 +77,7 @@
         :disabled="disabled"
         :readonly="readonly"
         :autocomplete="autocomplete"
-        :placeholder="placeholder"
+        :placeholder="attrs.placeholder"
         :autofocus="autofocus"
         :form="form"
         v-model="innerValue"
