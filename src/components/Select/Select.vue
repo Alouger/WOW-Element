@@ -19,7 +19,8 @@
         :disabled="disabled"
         :placeholder="placeholder"
         ref="inputRef"
-        readonly
+        :readonly="!filterable"
+        @input="onFilter"
       >
         <!-- @mousedown.prevent="NOOP" 阻止blur的发生 -->
         <template #suffix>
@@ -40,7 +41,7 @@
       </Input>
       <template #content>
         <ul class="wow-select__menu">
-          <template v-for="(item, index) in options" :key="index">
+          <template v-for="(item, index) in filteredOptions" :key="index">
             <li
               class="wow-select__menu-item"
               :class="{
@@ -67,12 +68,13 @@
 import type { SelectProps, SelectEmits, SelectOption, SelectStates } from './types'
 import Tooltip from '../Tooltip/Tooltip.vue'
 import Input from '../Input/Input.vue'
-import { ref, reactive, computed } from 'vue'
+import { ref, reactive, computed, watch } from 'vue'
 import type { Ref } from 'vue'
 import type { TooltipInstance } from '../Tooltip/types'
 import type { InputInstance } from '../Input/types'
 import Icon from '../Icon/Icon.vue'
 import RenderVnode from '../Common/RenderVnode'
+import { isFunction } from 'lodash-es'
 
 defineOptions({
   name: 'WowSelect'
@@ -135,6 +137,28 @@ const states = reactive<SelectStates>({
   selectedOption: initialOption,
   mouseHover: false
 })
+// 筛选功能：本地存储一个响应式变量，筛选后的选项
+const filteredOptions = ref(props.options)
+// 筛选功能：我们还要注意props.option如果是外部传入的情况，它更新的时候我们也要手动进行更新下filteredOptions
+watch(() => props.options, (newOptions) => {
+  filteredOptions.value = newOptions
+})
+// 筛选功能：该函数负责生成一系列筛选后新的选项
+const generateFilterOptions = (searchValue: string) => {
+  if (!props.filterable) return
+  // 自定义filter的处理方式 - 如果有自定义就用自定义，没有就用默认的数组上的filter
+  // 使用lodash-es上的一个方法，可以判断我们传入的值是不是一个函数
+  if (props.filterMethod && isFunction(props.filterMethod)) {
+    filteredOptions.value = props.filterMethod(searchValue)
+  } else {
+    // 用户没有传入自定义filter处理函数的话，就用默认的数组上的filter
+    filteredOptions.value = props.options.filter(option => option.label.includes(searchValue))
+  }
+}
+// 筛选功能：用于绑定到Input组件上的回调
+const onFilter = () => {
+  generateFilterOptions(states.inputValue)
+}
 
 const showClearIcon = computed(() => {
   // 计算为true的要求：

@@ -18,6 +18,7 @@ export interface SelectProps {
   renderLabel?: RenderLabelFunc;
   // 是否允许开启筛选
   filterable?: boolean;
+  filterMethod?: CustomFilterFunc;
 }
 
 export interface SelectStates {
@@ -29,6 +30,8 @@ export interface SelectStates {
 }
 // 自定义模板的函数
 export type RenderLabelFunc = (option: SelectOption) => VNode;
+// 自定义筛选的函数
+export type CustomFilterFunc = (value: string) => SelectOption[];
 
 export interface SelectEmits {
   (e: 'change', value: string): void;
