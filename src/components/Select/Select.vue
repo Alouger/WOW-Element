@@ -50,7 +50,9 @@
               :id="`select-item-${item.value}`"
               @click.stop="itemSelect(item)"
             >
-              {{ item.label }}
+              <!-- 这里仅仅是文本的格式，我们希望既能支持文本又能支持Vnode，我们之前写过Common组件里的RenderVnode.ts就可以既渲染string类型又能渲染VNode -->
+              <!-- {{ item.label }} -->
+              <RenderVnode :vNode="renderLabel ? renderLabel(item) : item.label" />
               <!-- 如果被选中就显示，这个span只是用来测试 -->
               <span v-if="states.selectedOption?.value == item.value">Selected!!</span>
             </li>
@@ -70,6 +72,7 @@ import type { Ref } from 'vue'
 import type { TooltipInstance } from '../Tooltip/types'
 import type { InputInstance } from '../Input/types'
 import Icon from '../Icon/Icon.vue'
+import RenderVnode from '../Common/RenderVnode'
 
 defineOptions({
   name: 'WowSelect'
