@@ -24,11 +24,13 @@ export interface FormProps {
 }
 
 export interface FormContext extends FormProps {
-  
+  addField: (field: FormItemContext) => void;
+  removeField: (field: FormItemContext) => void;
 }
 
 export interface FormItemContext {
   validate: (trigger?: string) => any;
+  prop: string;
 }
 
 export interface FormValidateFailure {
