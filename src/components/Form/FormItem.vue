@@ -13,11 +13,13 @@
       <slot />
     </div>
     {{ innerValue }} - {{ itemRules}}
+    <button @click.prevent="validate">Validate</button>
   </div>
 </template>
 
 <script setup lang="ts">
 import { inject, computed } from 'vue'
+import Schema from 'async-validator'
 import { isNil } from 'lodash-es'
 import { formContextKey } from './types'
 import type { FormItemProps } from './types'
@@ -51,7 +53,26 @@ const itemRules = computed(() => {
   if (rules && props.prop && rules[props.prop]) {
     return rules[props.prop]
   } else {
-    return null
+    return []
   }
 })
+
+const validate = () => {
+  const modelName = props.prop
+  console.log("props.prop", props.prop);
+  if (modelName) {
+    const validator = new Schema({
+      [modelName]: itemRules.value
+    })
+    console.log("validator", validator);
+    console.log("itemRules.value", itemRules.value);
+    validator.validate({ [modelName]: innerValue.value })
+      .then(() => {
+        console.log('no error')
+      })
+      .catch(e => {
+        console.log(e.errors)
+      })
+  }
+}
 </script>
