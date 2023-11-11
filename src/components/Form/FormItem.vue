@@ -21,7 +21,6 @@
       </div>
     </div>
     {{ innerValue }} - {{ itemRules}}
-    <button @click.prevent="validate">Validate</button>
   </div>
 </template>
 
@@ -72,12 +71,31 @@ const itemRules = computed(() => {
     return []
   }
 })
+// 筛选一下规则
+const getTriggeredRules = (trigger?: string) => {
+  const rules = itemRules.value;
+  if (rules) {
+    return rules.filter(rule => {
+      // 如果rule里没有trigger或者trigger没有传过来, 说明这条规则是需要被验证的
+      if (!rule.trigger || !trigger) return true
+      return rule.trigger && rule.trigger === trigger
+    })
+  } else {
+    return []
+  }
+}
 
-const validate = () => {
+const validate = (trigger?: string) => {
   const modelName = props.prop
+  const triggeredRules = getTriggeredRules(trigger)
+  // 没有任何规则的时候
+  if (triggeredRules.length === 0) {
+    return true
+  }
   if (modelName) {
     const validator = new Schema({
-      [modelName]: itemRules.value
+    //   [modelName]: itemRules.value
+      [modelName]: triggeredRules
     })
     validateStatus.loading = true
     validator.validate({ [modelName]: innerValue.value })

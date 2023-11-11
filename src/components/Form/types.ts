@@ -8,7 +8,15 @@ export interface FormItemProps {
   prop?: string;
 }
 
-export type FormRules = Record<string, RuleItem[]>
+// FormRules原本用到的是RuleItem数组，其实RuleItem中并没有对应的trigger
+// 而我们在Basic.vue传入Form标签的rules里的trigger是我们自己加的。为了甄别，在不同事件进行触发，我们需要修改一下
+// 做一个继承的操作，让FormItemRule比RuleItem多一个我们需要参数————trigger
+export interface FormItemRule extends RuleItem {
+  trigger?: string;
+}
+
+// export type FormRules = Record<string, RuleItem[]>
+export type FormRules = Record<string, FormItemRule[]>
 
 export interface FormProps {
   model: Record<string, any>;
@@ -20,7 +28,7 @@ export interface FormContext extends FormProps {
 }
 
 export interface FormItemContext {
-  validate: () => any;
+  validate: (trigger?: string) => any;
 }
 
 export interface FormValidateFailure {

@@ -118,8 +118,8 @@ const inputRef = ref() as Ref<HTMLInputElement>
 // 接收从FormItem组件传过来的数据
 const formItemContext = inject(formItemContextKey)
 // 运行验证，该函数在下面handleBlur函数里调用
-const runValidation = () => {
-  formItemContext?.validate()
+const runValidation = (trigger?: string) => {
+  formItemContext?.validate(trigger)
 }
 
 // 两个感叹号!!可以把变量转换成布尔值
@@ -146,9 +146,11 @@ const keepFocus = async () => {
 const handleInput = () => {
   emits('update:modelValue', innerValue.value)
   emits('input', innerValue.value)
+  runValidation('input')
 }
 const handleChange = () => {
   emits('change', innerValue.value)
+  runValidation('change')
 }
 const handleFocus = (event: FocusEvent) => {
   isFocus.value = true
@@ -158,7 +160,7 @@ const handleBlur = (event: FocusEvent) => {
   console.log('blur triggered')
   isFocus.value = false
   emits('blur', event)
-  runValidation()
+  runValidation('blur')
 }
 // 点击清空Icon后，清空内容
 const clear = () => {
