@@ -94,10 +94,11 @@
 </template>
 
 <script setup lang="ts">
-import { ref, watch, computed, useAttrs, nextTick } from 'vue'
+import { ref, watch, computed, useAttrs, nextTick, inject } from 'vue'
 import type { Ref } from 'vue'
 import type { InputProps, InputEmits } from './types'
 import Icon from '../Icon/Icon.vue'
+import { formItemContextKey } from '../Form/types'
 
 defineOptions({
   name: 'WowInput',
@@ -113,6 +114,13 @@ const isFocus = ref(false)
 // 控制是否为密码可见或不可见
 const passwordVisible = ref(false)
 const inputRef = ref() as Ref<HTMLInputElement>
+
+// 接收从FormItem组件传过来的数据
+const formItemContext = inject(formItemContextKey)
+// 运行验证，该函数在下面handleBlur函数里调用
+const runValidation = () => {
+  formItemContext?.validate()
+}
 
 // 两个感叹号!!可以把变量转换成布尔值
 // 该变量控制是否显示清空的Icon
@@ -150,6 +158,7 @@ const handleBlur = (event: FocusEvent) => {
   console.log('blur triggered')
   isFocus.value = false
   emits('blur', event)
+  runValidation()
 }
 // 点击清空Icon后，清空内容
 const clear = () => {

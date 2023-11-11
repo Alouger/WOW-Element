@@ -10,10 +10,12 @@ import { reactive } from 'vue'
 const model = reactive({
   email: '',
   password: '',
+  test: ''
 })
 const rules = {
   email: [{ type: 'email', required: true, trigger: 'blur'}],
   password: [{ type: 'string', required: true, trigger: 'blur', min: 3, max: 5}],
+  test: [{ type: 'string', required: true, trigger: 'blur'}],
 }
 
 </script>
@@ -30,6 +32,12 @@ const rules = {
         <Button>{{label}}</Button>
       </template>
       <Input type="password" v-model="model.password"/>
+    </FormItem>
+    <FormItem label="test value" prop="test">
+      <template #default="{ validate }">
+        <!-- 这是原生的input组件 -->
+        <input type="text" v-model="model.test" @blur="validate"/>
+      </template>
     </FormItem>
     <div>
       <Button type="primary">Submit</Button>
