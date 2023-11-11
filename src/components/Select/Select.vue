@@ -137,6 +137,14 @@ const inputRef = ref() as Ref<InputInstance>
 
 // 我们希望刚开始的时候能对option进行一个查找
 const initialOption = findOption(props.modelValue)
+watch(() => props.modelValue, async (newValue) => {
+  const updateOption = findOption(newValue)
+  states.inputValue = updateOption ? updateOption.label : ''
+  states.selectedOption = updateOption
+  const updatedValue = updateOption ? updateOption.value : ''
+  emits('change', updatedValue)
+  emits('update:modelValue', updatedValue)
+})
 // 因为有了states里的inputValue，所以我们就不需要innerValue了
 // const innerValue = ref(initialOption ? initialOption.label : '')
 const states = reactive<SelectStates>({
