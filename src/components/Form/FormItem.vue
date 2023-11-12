@@ -4,7 +4,8 @@
     :class="{
       'is-error': validateStatus.state === 'error',
       'is-success': validateStatus.state === 'success',
-      'is-loading': validateStatus.loading
+      'is-loading': validateStatus.loading,
+      'is-required': isRequired
     }"
   >
     <label class="wow-form-item__label">
@@ -20,7 +21,6 @@
         {{ validateStatus.errorMsg }}
       </div>
     </div>
-    {{ innerValue }} - {{ itemRules}}
   </div>
 </template>
 
@@ -48,7 +48,7 @@ const validateStatus = reactive({
 })
 
 // 为了实现重置状态功能，在组件在页面中挂载的时候要记录下最初值，也就是这个initialValue，这样在重置的时候就可以直接把最初值赋值过来
-let initialValue = null
+let initialValue: any = null
 // 我们从formContext取得的对应的值
 const innerValue = computed(() => {
   const model = formContext?.model
@@ -87,6 +87,10 @@ const getTriggeredRules = (trigger?: string) => {
     return []
   }
 }
+
+const isRequired = computed(() => {
+  return itemRules.value.some(rule => rule.required)
+})
 
 const validate = (trigger?: string) => {
   const modelName = props.prop

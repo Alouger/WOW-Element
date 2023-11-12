@@ -1,7 +1,6 @@
 <template>
   <form class="wow-form">
     <slot />
-    <button @click.prevent="validate">Validate All</button>
   </form>
 </template>
 

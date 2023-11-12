@@ -1,0 +1,50 @@
+.wow-form {
+    --wow-form-label-font-size: var(--wow-font-size-base);
+    --wow-form-content-font-size: var(--wow-font-size-base);
+  }
+  .wow-form-item {
+    display: flex;
+    margin-bottom: 18px;
+    .wow-form-item__label {
+      width: 150px;
+      height: 32px;
+      line-height: 32px;
+      padding: 0 12px 0 0;
+      box-sizing: border-box;
+      display: inline-flex;
+      justify-content: flex-end;
+      font-size: var(--wow-form-label-font-size);
+      color: var(--wow-text-color-regular);
+    }
+    .wow-form-item__content {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      flex: 1;
+      line-height: 32px;
+      font-size: var(--wow-form-content-font-size);
+      min-width: 0;
+      position: relative;
+    }
+    .wow-form-item__error-msg {
+      position: absolute;
+      top: 100%;
+      left: 0;
+      padding-top: 2px;
+      color: var(--wow-color-danger);
+      font-size: 12px;
+      line-height: 1;
+    }
+  }
+  
+  .wow-form-item.is-error .wow-input__wrapper {
+    box-shadow: 0 0 0 1px var(--wow-color-danger) inset;
+  }
+  .wow-form-item.is-success .wow-input__wrapper {
+    box-shadow: 0 0 0 1px var(--wow-color-success) inset;
+  }
+  .wow-form-item.is-required > .wow-form-item__label::before {
+    content: "*";
+    color: var(--wow-color-danger);
+    margin-right: 4px;
+  }
