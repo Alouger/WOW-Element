@@ -28,8 +28,16 @@ export interface FormContext extends FormProps {
   removeField: (field: FormItemContext) => void;
 }
 
+export interface ValidateStatusProp {
+  state: 'init' | 'success' | 'error';
+  errorMsg: string;
+  loading: boolean;
+}
+
 export interface FormItemContext {
-  validate: (trigger?: string) => any;
+  // 因为要求validate返回的是Promise类型，不能写any了
+  // validate: (trigger?: string) => any;
+  validate: (trigger?: string) => Promise<any>;
   prop: string;
   resetField(): void;
   clearValidate(): void;
@@ -45,6 +53,13 @@ export interface FormInstance {
   validate: () => Promise<any>;
   resetFields: (props?: string[]) => void;
   clearValidate: (props?: string[]) => void;
+}
+
+export interface FormItemInstance {
+  validateStatus: ValidateStatusProp;
+  validate: (trigger?: string) => Promise<any>;
+  resetField(): void;
+  clearValidate(): void;
 }
 
 export const formContextKey: InjectionKey<FormContext> = Symbol('formContextKey')

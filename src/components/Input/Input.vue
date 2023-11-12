@@ -119,7 +119,7 @@ const inputRef = ref() as Ref<HTMLInputElement>
 const formItemContext = inject(formItemContextKey)
 // 运行验证，该函数在下面handleBlur函数里调用
 const runValidation = (trigger?: string) => {
-  formItemContext?.validate(trigger)
+  formItemContext?.validate(trigger).catch((e) => console.log(e.errors))
 }
 
 // 两个感叹号!!可以把变量转换成布尔值

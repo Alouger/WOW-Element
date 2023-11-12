@@ -29,7 +29,7 @@ import { inject, computed, reactive, provide, onMounted, onUnmounted } from 'vue
 import Schema from 'async-validator'
 import { isNil } from 'lodash-es'
 import { formContextKey, formItemContextKey } from './types'
-import type { FormItemProps, FormValidateFailure, FormItemContext } from './types'
+import type { FormItemProps, FormValidateFailure, FormItemContext, ValidateStatusProp, FormItemInstance } from './types'
 
 defineOptions({
   name: 'WowFormItem'
@@ -38,7 +38,7 @@ defineOptions({
 const props = defineProps<FormItemProps>()
 // 拿到Form组件传过来的formContext后我们还需要在FormItem上设置一个属性，让用户去决定我们到底要使用哪个数据和规则
 const formContext = inject(formContextKey)
-const validateStatus = reactive({
+const validateStatus: ValidateStatusProp = reactive({
   // 显示验证状态：成功，失败，初始
   state: 'init',
   // 验证失败反馈的错误信息
@@ -92,7 +92,7 @@ const isRequired = computed(() => {
   return itemRules.value.some(rule => rule.required)
 })
 
-const validate = (trigger?: string) => {
+const validate = async (trigger?: string) => {
   const modelName = props.prop
   const triggeredRules = getTriggeredRules(trigger)
   // 没有任何规则的时候
@@ -162,5 +162,12 @@ onMounted(() => {
 
 onUnmounted(() => {
   formContext?.removeField(context)
+})
+
+defineExpose<FormItemInstance>({
+  validateStatus,
+  validate,
+  resetField,
+  clearValidate
 })
 </script>
