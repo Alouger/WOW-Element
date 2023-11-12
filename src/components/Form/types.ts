@@ -31,6 +31,8 @@ export interface FormContext extends FormProps {
 export interface FormItemContext {
   validate: (trigger?: string) => any;
   prop: string;
+  resetField(): void;
+  clearValidate(): void;
 }
 
 export interface FormValidateFailure {
@@ -40,7 +42,9 @@ export interface FormValidateFailure {
 
 // // 因为我们要把整体验证的validate函数暴露出去，所以要写instance
 export interface FormInstance {
-  validate: () => Promise<any>
+  validate: () => Promise<any>;
+  resetFields: (props?: string[]) => void;
+  clearValidate: (props?: string[]) => void;
 }
 
 export const formContextKey: InjectionKey<FormContext> = Symbol('formContextKey')

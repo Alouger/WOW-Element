@@ -9,14 +9,12 @@ import { reactive, ref } from 'vue'
 
 const formRef = ref()
 const model = reactive({
-  email: '',
-  password: '',
+  email: '123',
+  password: '12',
   test: ''
 })
 const rules = {
-  email: [{ type: 'email', required: true, trigger: 'blur'},
-          { type: 'string', required: true, trigger: 'input'}
-        ],
+  email: [{ type: 'email', required: true, trigger: 'blur'}],
   password: [{ type: 'string', required: true, trigger: 'blur', min: 3, max: 5}],
   test: [{ type: 'string', required: true, trigger: 'blur'}],
 }
@@ -28,6 +26,10 @@ const submit = async () => {
   } catch (e) {
     console.log('the error', e);
   }
+}
+
+const reset = () => {
+  formRef.value.resetFields()
 }
 
 </script>
@@ -53,7 +55,7 @@ const submit = async () => {
     </FormItem>
     <div>
       <Button type="primary" @click.prevent="submit">Submit</Button>
-      <Button >Reset</Button>
+      <Button @click.prevent="reset">Reset</Button>
     </div>
   </Form>
   <p>

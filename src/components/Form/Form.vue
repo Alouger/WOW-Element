@@ -27,6 +27,17 @@ const removeField: FormContext['removeField'] = (field) => {
   }
 }
 
+// 重置状态功能：这里的形参是对应我们的这个object keys，也就是说我们想恢复哪几个字段的值，也可以传进去，假如说我们什么都不传，那就是恢复所有的值
+const resetFields = (keys: string[] = []) => {
+  const filterArr = keys.length > 0 ? fields.filter(field => keys.include(filed.prop)) : fields
+  filterArr.forEach(field => field.resetField())
+}
+// 重置状态功能
+const clearValidate = (keys: string[] = []) => {
+  const filterArr = keys.length > 0 ? fields.filter(field => keys.include(filed.prop)) : fields
+  filterArr.forEach(field => field.clearValidate())
+}
+
 // 整体进行表单验证的函数，应该是返回Promise
 const validate = async () => {
   // 初始化错误信息的object，然后根据实际运行的结果一点点填充上去
@@ -58,6 +69,8 @@ provide(formContextKey, {
 
 // 因为我们要把整体验证的validate函数暴露出去
 defineExpose<FormInstance>({
-  validate
+  validate,
+  resetFields,
+  clearValidate
 })
 </script>

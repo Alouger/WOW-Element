@@ -47,6 +47,8 @@ const validateStatus = reactive({
   loading: false
 })
 
+// 为了实现重置状态功能，在组件在页面中挂载的时候要记录下最初值，也就是这个initialValue，这样在重置的时候就可以直接把最初值赋值过来
+let initialValue = null
 // 我们从formContext取得的对应的值
 const innerValue = computed(() => {
   const model = formContext?.model
@@ -121,15 +123,36 @@ const validate = (trigger?: string) => {
   }
 }
 
+// 重置状态功能
+const clearValidate = () => {
+  // 恢复validateStatus到最初的状态
+  validateStatus.state = 'init'
+  validateStatus.errorMsg = ''
+  validateStatus.loading = false
+}
+
+// 重置状态功能: 恢复到最初的值
+const resetField = () => {
+  clearValidate()
+  const model = formContext?.model
+  if (model && props.prop && !isNil(model[props.prop])) {
+    model[props.prop] = initialValue
+  }
+}
+
 const context: FormItemContext = {
   validate,
-  prop: props.prop || ''
+  prop: props.prop || '',
+  clearValidate,
+  resetField
 }
 provide(formItemContextKey, context)
 
 onMounted(() => {
   if (props.prop) {
     formContext?.addField(context)
+    // 在组件在页面中挂载的时候要记录下最初值，也就是这个initialValue，这样在重置的时候就可以直接把最初值赋值过来
+    initialValue = innerValue.value
   }
 })
 
