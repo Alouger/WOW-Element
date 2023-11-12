@@ -29,12 +29,12 @@ const removeField: FormContext['removeField'] = (field) => {
 
 // 重置状态功能：这里的形参是对应我们的这个object keys，也就是说我们想恢复哪几个字段的值，也可以传进去，假如说我们什么都不传，那就是恢复所有的值
 const resetFields = (keys: string[] = []) => {
-  const filterArr = keys.length > 0 ? fields.filter(field => keys.include(filed.prop)) : fields
+  const filterArr = keys.length > 0 ? fields.filter(field => keys.include(field.prop)) : fields
   filterArr.forEach(field => field.resetField())
 }
 // 重置状态功能
 const clearValidate = (keys: string[] = []) => {
-  const filterArr = keys.length > 0 ? fields.filter(field => keys.include(filed.prop)) : fields
+  const filterArr = keys.length > 0 ? fields.filter(field => keys.include(field.prop)) : fields
   filterArr.forEach(field => field.clearValidate())
 }
 
