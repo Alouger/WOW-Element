@@ -38,5 +38,10 @@ export interface FormValidateFailure {
   fields: ValidateFieldsError;
 }
 
+// // 因为我们要把整体验证的validate函数暴露出去，所以要写instance
+export interface FormInstance {
+  validate: () => Promise<any>
+}
+
 export const formContextKey: InjectionKey<FormContext> = Symbol('formContextKey')
 export const formItemContextKey: InjectionKey<FormItemContext> = Symbol('formItemContextKey')

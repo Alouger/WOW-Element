@@ -5,8 +5,9 @@ import Form from '@/components/Form/Form.vue'
 import FormItem from '@/components/Form/FormItem.vue'
 import Input from '@/components/Input/Input.vue'
 import Button from '@/components/Button/Button.vue'
-import { reactive } from 'vue'
+import { reactive, ref } from 'vue'
 
+const formRef = ref()
 const model = reactive({
   email: '',
   password: '',
@@ -20,11 +21,20 @@ const rules = {
   test: [{ type: 'string', required: true, trigger: 'blur'}],
 }
 
+const submit = async () => {
+  try {
+    await formRef.value.validate()
+    console.log('passed!');
+  } catch (e) {
+    console.log('the error', e);
+  }
+}
+
 </script>
 
 <template>
 <div>
-  <Form :model="model" :rules="rules">
+  <Form :model="model" :rules="rules" ref="formRef">
     <!-- prop="email"表示此Item希望从formContext取得email -->
     <FormItem label="the email" prop="email">
       <Input v-model="model.email"/>
@@ -42,7 +52,7 @@ const rules = {
       </template>
     </FormItem>
     <div>
-      <Button type="primary">Submit</Button>
+      <Button type="primary" @click.prevent="submit">Submit</Button>
       <Button >Reset</Button>
     </div>
   </Form>

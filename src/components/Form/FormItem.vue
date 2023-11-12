@@ -75,8 +75,9 @@ const itemRules = computed(() => {
 const getTriggeredRules = (trigger?: string) => {
   const rules = itemRules.value;
   if (rules) {
-    return rules.filter(rule => {
+    return rules.filter(rule => {    
       // 如果rule里没有trigger或者trigger没有传过来, 说明这条规则是需要被验证的
+      // 如果trigger为空字符串''，则if(trigger)为false，if(!trigger)为true
       if (!rule.trigger || !trigger) return true
       return rule.trigger && rule.trigger === trigger
     })
@@ -98,7 +99,9 @@ const validate = (trigger?: string) => {
       [modelName]: triggeredRules
     })
     validateStatus.loading = true
-    validator.validate({ [modelName]: innerValue.value })
+    // 该函数应该返回的是Promise，这样在Form组件中循环调用各个FormItem的验证函数更方便
+    // validator.validate本身返回的类型就带有Promise，直接return就好
+    return validator.validate({ [modelName]: innerValue.value })
       .then(() => {
         validateStatus.state = 'success'
       })
@@ -108,6 +111,9 @@ const validate = (trigger?: string) => {
         validateStatus.state = 'error'
         // 这里的message有可能是undefined，所以有加个 || ''
         validateStatus.errorMsg = (errors && errors.length > 0) ? errors[0].message || '' : ''
+        console.log(e.errors);
+        // 不return下面这行代码的话，在Form组件循环调用各个FormItem的验证函数时有catch到error的话，这个error是不会被展示出来的，但是我们又需要这个错误信息errorMsg，所以需要手动返回一下这个错误
+        return Promise.reject(e)
       })
       .finally(() => {
         validateStatus.loading = false
